@@ -1,0 +1,752 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Le Barbecue de la Butte – Paris 13</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  :root {
+    --rouge: #8B1A1A;
+    --rouge-clair: #B03030;
+    --or: #C9A84C;
+    --beige: #F5EDD8;
+    --noir: #111111;
+    --gris-fonce: #1A1A1A;
+    --gris-moyen: #2C2C2C;
+    --texte-clair: #E8E0D0;
+  }
+
+  body {
+    font-family: 'Georgia', serif;
+    background: var(--noir);
+    color: var(--texte-clair);
+    scroll-behavior: smooth;
+  }
+
+  /* ── NAV ── */
+  nav {
+    position: fixed; top: 0; width: 100%; z-index: 100;
+    background: rgba(17,17,17,0.95);
+    border-bottom: 1px solid var(--rouge);
+    padding: 14px 40px;
+    display: flex; justify-content: space-between; align-items: center;
+  }
+  nav .logo {
+    font-family: 'Georgia', serif;
+    font-size: 1.2rem; color: var(--or);
+    letter-spacing: 1px;
+  }
+  nav ul { list-style: none; display: flex; gap: 32px; }
+  nav ul a {
+    color: var(--texte-clair); text-decoration: none;
+    font-size: 0.9rem; letter-spacing: 1px; text-transform: uppercase;
+    transition: color 0.2s;
+  }
+  nav ul a:hover { color: var(--or); }
+
+  /* ── HERO ── */
+  #hero {
+    min-height: 100vh;
+    background: linear-gradient(to bottom, rgba(0,0,0,0.55) 0%, rgba(80,10,0,0.2) 50%, rgba(0,0,0,0.75) 100%),
+                url('charbon-bg.jpg') center center / cover no-repeat;
+    display: flex; align-items: center; justify-content: center;
+    text-align: center;
+    padding: 120px 20px 60px;
+    position: relative; overflow: hidden;
+  }
+  #hero::before {
+    content: '';
+    position: absolute; inset: 0;
+    background: radial-gradient(ellipse at center, rgba(200,80,0,0.18) 0%, transparent 65%);
+    pointer-events: none;
+  }
+  .hero-content { position: relative; z-index: 1; }
+  .hero-titre {
+    font-size: clamp(3rem, 8vw, 6rem);
+    line-height: 1.1;
+    color: #fff;
+    text-shadow: 2px 2px 20px rgba(180,60,0,0.6);
+    font-style: italic;
+    margin-bottom: 20px;
+  }
+  .hero-titre span { color: var(--or); }
+  .hero-sous {
+    font-size: 1.1rem; color: var(--beige);
+    letter-spacing: 3px; text-transform: uppercase;
+    margin-bottom: 16px;
+  }
+  .hero-tagline {
+    font-size: 1rem; color: rgba(255,255,255,0.6);
+    font-style: italic; margin-bottom: 12px;
+  }
+  .hero-cb {
+    font-size: 0.85rem; color: var(--or);
+    letter-spacing: 2px; text-transform: uppercase;
+    margin-bottom: 40px; font-family: Arial, sans-serif;
+  }
+  .hero-cta {
+    display: inline-block;
+    border: 1px solid var(--or); color: var(--or);
+    padding: 14px 36px; text-decoration: none;
+    font-size: 0.85rem; letter-spacing: 2px; text-transform: uppercase;
+    transition: all 0.3s;
+  }
+  .hero-cta:hover { background: var(--or); color: var(--noir); }
+
+  /* ── SECTIONS COMMUNES ── */
+  section { padding: 80px 40px; max-width: 1100px; margin: 0 auto; }
+  .section-titre {
+    text-align: center; font-size: 2.2rem;
+    color: var(--or); font-style: italic;
+    margin-bottom: 10px;
+  }
+  .section-ligne {
+    width: 60px; height: 2px;
+    background: var(--rouge); margin: 0 auto 50px;
+  }
+
+  /* ── MENU ── */
+  #menu { max-width: 900px; }
+  .menu-bloc { margin-bottom: 50px; }
+  .menu-categorie {
+    display: inline-block;
+    background: var(--rouge);
+    color: #fff; font-size: 0.85rem;
+    letter-spacing: 2px; text-transform: uppercase;
+    padding: 6px 18px; margin-bottom: 8px;
+    font-family: Arial, sans-serif; font-style: normal;
+  }
+  .menu-sous-titre {
+    font-size: 0.85rem; font-style: italic;
+    color: rgba(255,255,255,0.45); margin-bottom: 20px;
+    font-family: Arial, sans-serif;
+  }
+  .menu-item {
+    display: flex; justify-content: space-between; align-items: baseline;
+    padding: 12px 0;
+    border-bottom: 1px dotted rgba(201,168,76,0.2);
+  }
+  .menu-item:last-child { border-bottom: none; }
+  .menu-nom { font-size: 1.05rem; color: var(--texte-clair); }
+  .menu-nom small { font-size: 0.8rem; color: rgba(255,255,255,0.4); font-style: italic; }
+  .menu-prix {
+    font-size: 1rem; color: var(--or);
+    font-family: Arial, sans-serif; font-style: normal;
+    white-space: nowrap; margin-left: 20px;
+  }
+  .menu-note {
+    margin-top: 30px; padding: 20px;
+    border: 1px solid rgba(201,168,76,0.2);
+    background: rgba(201,168,76,0.05);
+  }
+  .menu-note-titre {
+    font-size: 0.8rem; letter-spacing: 2px;
+    text-transform: uppercase; color: var(--or);
+    margin-bottom: 10px; font-family: Arial, sans-serif; font-style: normal;
+  }
+  .menu-accomp {
+    font-size: 0.95rem; font-style: italic;
+    color: rgba(255,255,255,0.6); line-height: 1.8;
+    margin-bottom: 14px;
+  }
+  .menu-suppl {
+    display: flex; justify-content: space-between;
+    font-size: 0.9rem; font-family: Arial, sans-serif; font-style: normal;
+    color: rgba(255,255,255,0.7); padding: 5px 0;
+    border-top: 1px dotted rgba(201,168,76,0.15);
+  }
+  .menu-suppl-label { }
+  .menu-suppl-sauces {
+    font-size: 0.85rem; font-style: italic;
+    color: rgba(255,255,255,0.45); margin: 4px 0 8px;
+    font-family: Arial, sans-serif;
+  }
+  .menu-maison {
+    margin-top: 30px; text-align: center;
+    font-style: italic; font-size: 0.95rem;
+    color: rgba(255,255,255,0.5);
+    border-top: 1px solid rgba(255,255,255,0.1);
+    padding-top: 20px;
+  }
+  .menu-cb {
+    text-align: center; font-size: 0.8rem;
+    letter-spacing: 2px; text-transform: uppercase;
+    color: var(--or); margin-top: 10px;
+    font-family: Arial, sans-serif;
+  }
+
+  /* ── BOISSONS ── */
+  #boissons { max-width: 900px; }
+  .boissons-grid {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 40px;
+  }
+  .bois-bloc { margin-bottom: 36px; }
+  .bois-categorie {
+    display: inline-block;
+    background: var(--rouge);
+    color: #fff; font-size: 0.8rem;
+    letter-spacing: 2px; text-transform: uppercase;
+    padding: 5px 14px; margin-bottom: 16px;
+    font-family: Arial, sans-serif; font-style: normal;
+  }
+  .bois-item {
+    display: flex; justify-content: space-between; align-items: baseline;
+    padding: 9px 0;
+    border-bottom: 1px dotted rgba(201,168,76,0.15);
+    font-size: 0.95rem;
+  }
+  .bois-item:last-child { border-bottom: none; }
+  .bois-nom { color: var(--texte-clair); }
+  .bois-prix { color: var(--or); font-family: Arial, sans-serif; font-style: normal; white-space: nowrap; margin-left: 10px; }
+  .bois-vin-header {
+    display: grid; grid-template-columns: 1fr 80px 80px 80px 80px;
+    font-size: 0.7rem; color: rgba(255,255,255,0.35);
+    letter-spacing: 1px; text-transform: uppercase;
+    font-family: Arial, sans-serif; padding: 4px 0 6px;
+    border-bottom: 1px solid rgba(201,168,76,0.1);
+  }
+  .bois-vin-row {
+    display: grid; grid-template-columns: 1fr 80px 80px 80px 80px;
+    padding: 10px 0;
+    border-bottom: 1px dotted rgba(201,168,76,0.15);
+    font-size: 0.9rem;
+  }
+  .bois-vin-row:last-child { border-bottom: none; }
+  .bois-vin-nom { color: var(--texte-clair); }
+  .bois-vin-nom small { display: block; font-size: 0.75rem; color: rgba(255,255,255,0.35); font-style: italic; margin-top: 2px; }
+  .bois-vin-prix { color: var(--or); font-family: Arial, sans-serif; text-align: center; }
+  .bois-softs-group { margin-bottom: 12px; }
+  .bois-softs-title { font-size: 0.8rem; letter-spacing: 1px; text-transform: uppercase; color: rgba(255,255,255,0.55); font-family: Arial; margin-bottom: 4px; }
+  .bois-softs-list { font-size: 0.9rem; font-style: italic; color: rgba(255,255,255,0.5); line-height: 1.7; }
+
+  /* ── SÉPARATEUR ── */
+  .separateur {
+    width: 100%; height: 1px;
+    background: linear-gradient(to right, transparent, var(--rouge), transparent);
+    margin: 0;
+  }
+
+  /* ── HORAIRES & CONTACT ── */
+  #infos {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 60px;
+    max-width: 900px;
+  }
+  .info-bloc h3 {
+    font-size: 1.4rem; color: var(--or);
+    font-style: italic; margin-bottom: 20px;
+  }
+  .horaire-ligne {
+    display: flex; justify-content: space-between;
+    padding: 10px 0; border-bottom: 1px dotted rgba(255,255,255,0.1);
+    font-size: 0.95rem;
+  }
+  .horaire-jour { color: var(--texte-clair); }
+  .horaire-heure { color: rgba(255,255,255,0.5); font-style: italic; }
+  .contact-item {
+    display: flex; align-items: center; gap: 14px;
+    padding: 12px 0; border-bottom: 1px dotted rgba(255,255,255,0.1);
+    font-size: 0.95rem; color: var(--texte-clair);
+  }
+  .contact-icone { color: var(--or); font-size: 1.2rem; width: 20px; text-align: center; }
+  .contact-item a { color: var(--or); text-decoration: none; }
+  .contact-item a:hover { text-decoration: underline; }
+
+  /* ── FOOTER ── */
+  footer {
+    background: var(--gris-fonce);
+    border-top: 1px solid var(--rouge);
+    text-align: center; padding: 30px;
+    font-size: 0.8rem; color: rgba(255,255,255,0.3);
+    letter-spacing: 1px;
+  }
+
+  /* ── SÉLECTEUR LANGUE ── */
+  .lang-bar {
+    display: flex; justify-content: center; gap: 8px;
+    margin-bottom: 40px;
+  }
+  .lang-btn {
+    background: transparent;
+    border: 1px solid rgba(201,168,76,0.3);
+    color: rgba(255,255,255,0.45);
+    padding: 6px 16px; cursor: pointer;
+    font-size: 0.8rem; letter-spacing: 1px;
+    font-family: Arial, sans-serif;
+    transition: all 0.2s; border-radius: 2px;
+  }
+  .lang-btn:hover { border-color: var(--or); color: var(--or); }
+  .lang-btn.active {
+    background: var(--rouge); border-color: var(--rouge);
+    color: #fff; font-weight: bold;
+  }
+
+  /* ── RESPONSIVE ── */
+  @media (max-width: 700px) {
+    nav ul { gap: 16px; }
+    #infos { grid-template-columns: 1fr; gap: 40px; }
+    section { padding: 60px 20px; }
+    nav { padding: 14px 20px; }
+    .boissons-grid { grid-template-columns: 1fr; gap: 0; }
+    .bois-vin-header, .bois-vin-row { grid-template-columns: 1fr 60px 60px 60px 60px; font-size: 0.8rem; }
+  }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="logo">Le Barbecue de la Butte</div>
+  <ul>
+    <li><a href="#menu" data-i18n="nav_menu">Carte</a></li>
+    <li><a href="#boissons" data-i18n="nav_drinks">Boissons</a></li>
+    <li><a href="#infos" data-i18n="nav_hours">Horaires</a></li>
+    <li><a href="#infos" data-i18n="nav_contact">Contact</a></li>
+  </ul>
+</nav>
+
+<!-- HERO -->
+<section id="hero" style="max-width:100%; padding-top:0; padding-bottom:0;">
+  <div class="hero-content">
+    <div class="hero-sous">Restaurant — Paris 13<sup>e</sup></div>
+    <h1 class="hero-titre">Le Barbecue<br><span>de la Butte</span></h1>
+    <p class="hero-tagline">Toutes nos viandes sont marinées · Tous nos plats sont faits Maison</p>
+    <p class="hero-cb">Minimum CB 10 €</p>
+    <a href="#menu" class="hero-cta">Voir la carte</a>
+  </div>
+</section>
+
+<div class="separateur"></div>
+
+<!-- MENU -->
+<section id="menu" style="padding-top:80px; padding-bottom:60px; margin:0 auto;">
+  <h2 class="section-titre" id="menu-titre">Notre Carte</h2>
+  <div class="section-ligne"></div>
+
+  <!-- Sélecteur de langue -->
+  <div class="lang-bar">
+    <button class="lang-btn active" onclick="setLang('fr')">🇫🇷 FR</button>
+    <button class="lang-btn" onclick="setLang('en')">🇬🇧 EN</button>
+    <button class="lang-btn" onclick="setLang('it')">🇮🇹 IT</button>
+    <button class="lang-btn" onclick="setLang('es')">🇪🇸 ES</button>
+  </div>
+
+  <div id="menu-contenu"></div>
+</section>
+
+<div class="separateur"></div>
+
+<!-- BOISSONS -->
+<section id="boissons" style="padding-top:80px; padding-bottom:60px; margin:0 auto;">
+  <h2 class="section-titre" id="boissons-titre">Nos Boissons</h2>
+  <div class="section-ligne"></div>
+  <div id="boissons-contenu"></div>
+  <div class="menu-cb" style="margin-top:20px;" id="boissons-mincb">Minimum CB 10 €</div>
+</section>
+
+<div class="separateur"></div>
+
+<!-- HORAIRES & CONTACT -->
+<section style="padding:80px 40px; max-width:900px; margin:0 auto;">
+  <h2 class="section-titre" id="infos-titre">Horaires &amp; Contact</h2>
+  <div class="section-ligne"></div>
+  <div id="infos"></div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  © 2026 Le Barbecue de la Butte &nbsp;·&nbsp; 11 rue de la Butte aux Cailles, 75013 Paris &nbsp;·&nbsp; 01 83 96 13 43
+</footer>
+
+<script>
+const T = {
+  fr: {
+    nav_menu:"Carte", nav_drinks:"Boissons", nav_hours:"Horaires", nav_contact:"Contact",
+    menu_titre:"Notre Carte",
+    starters:"Entrées", mains:"Plats", desserts:"Desserts",
+    mainsSubtitle:"Servis avec un accompagnement au choix",
+    sidesTitle:"Accompagnements au choix",
+    sides:"Haricots Verts en Persillade &nbsp;·&nbsp; Pommes Grenailles &nbsp;·&nbsp; Frites Maison &nbsp;·&nbsp; Salade",
+    sideSuppl:"Supplément Accompagnement", gratinSuppl:"Gratin Dauphinois aux Truffes",
+    saucesLine:"Sauces au choix : Poivre &nbsp;·&nbsp; Roquefort &nbsp;·&nbsp; Forestière",
+    sauceSuppl:"Supplément Sauce",
+    starters_items:[
+      ["Oeufs Mimosa","6,00 €"],
+      ["Crottin de Chavignole Toasté","7,00 €"],
+      ["Escargots de Bourgogne <small>x6 / x12</small>","6,50 € / 12,00 €"],
+      ["Salade de Gésiers Confits","7,00 €"],
+      ["Terrine aux Deux Saumons","8,00 €"]
+    ],
+    mains_items:[
+      ["Brochette de Poulet","14,00 €"],
+      ["Travers de Porc","16,00 €"],
+      ["Brochette de Boeuf","19,00 €"],
+      ["Brochette d'Agneau","19,00 €"],
+      ["L'Entrecôte du Chef","25,00 €"],
+      ["Gambas du Chef","28,00 €"]
+    ],
+    desserts_items:[
+      ["3 Boules de Glaces au Choix <small>(Chocolat au Lait · Chocolat Noir · Citron Vert · Citron Jaune · Fraise · Vanille)</small>","6,00 €"],
+      ["Tarte au Citron","7,00 €"],
+      ["Fondant au Chocolat","7,00 €"],
+      ["Tarte Tatin","8,00 €"],
+      ["Coupe Colonel","8,00 €"],
+      ["Assiette de 3 Fromages <small>(St Nectaire · Cantal · Rocamadour)</small>","10,00 €"]
+    ],
+    footnote:"Toutes nos viandes sont marinées et tous nos plats sont faits Maison",
+    mincb:"Minimum CB 10 €",
+    drinks_titre:"Nos Boissons",
+    aperitifs:"Apéritifs",
+    aperitifs_items:[["Kir","4,00 €"],["Kir Royal","6,00 €"],["Coupe de Champagne","7,00 €"],["Pastis","4,00 €"]],
+    beers_pression:"Bières Pression",
+    demi:"Demi (25cl)", pint_label:"Pinte (50cl)",
+    wines:"Vins",
+    wine_headers:["","Verre","Quart","Pichet","Bouteille"],
+    wine_rows:[["Blanc","4,00 €","7,00 €","12,00 €","20,00 €"],["Rosé","4,00 €","7,00 €","12,00 €","20,00 €"],["Rouge","4,00 €","7,00 €","12,00 €","20,00 €"]],
+    bottled_beers:"Bières en Bouteille",
+    bottled_items:[["Kronenbourg 33cl","4,50 €"],["Leffe Blonde 33cl","5,00 €"],["Desperados 33cl","5,00 €"],["Heineken 0% 33cl","4,00 €"]],
+    digestifs:"Digestifs",
+    digestifs_items:[["Cognac","5,00 €"],["Calvados","5,00 €"],["Rhum","5,00 €"],["Armagnac","5,00 €"]],
+    softs:"Softs",
+    water_title:"Eaux Minérales", water_list:"Evian 50cl · Badoit 50cl · Perrier 33cl", water_price:"3,00 €",
+    sodas_title:"Sodas", sodas_list:"Coca-Cola · Limonade · Orangina · Schweppes Tonic", sodas_price:"3,00 €",
+    juice_title:"Jus de Fruits", juice_list:"Pomme · Orange · Fraise · Ananas", juice_price:"3,50 €",
+    tea_title:"Thés &amp; Infusions", tea_list:"Menthe · Verveine · Camomille · Earl Grey", tea_price:"3,00 €",
+    infos_titre:"Horaires &amp; Contact",
+    hours_title:"Horaires d'Ouverture",
+    days:["Lundi","Mardi","Mercredi","Jeudi","Vendredi","Samedi","Dimanche"],
+    hours_list:["Fermé","12h00 – 14h30 / 19h00 – 22h30","12h00 – 14h30 / 19h00 – 22h30","12h00 – 14h30 / 19h00 – 22h30","12h00 – 14h30 / 19h00 – 23h00","12h00 – 14h30 / 19h00 – 23h00","12h00 – 15h00"],
+    contact_title:"Contact",
+    findus_title:"Nous Trouver",
+    metro:"Métro Corvisart (ligne 6) · Place d'Italie (lignes 5, 6, 7)"
+  },
+  en: {
+    nav_menu:"Menu", nav_drinks:"Drinks", nav_hours:"Hours", nav_contact:"Contact",
+    menu_titre:"Our Menu",
+    starters:"Starters", mains:"Main Courses", desserts:"Desserts",
+    mainsSubtitle:"Served with a side dish of your choice",
+    sidesTitle:"Side dishes",
+    sides:"Green Beans with Parsley &nbsp;·&nbsp; Baby Potatoes &nbsp;·&nbsp; Homemade Fries &nbsp;·&nbsp; Salad",
+    sideSuppl:"Extra Side Dish", gratinSuppl:"Truffle Dauphinois Gratin",
+    saucesLine:"Sauces of your choice: Pepper &nbsp;·&nbsp; Roquefort &nbsp;·&nbsp; Mushroom",
+    sauceSuppl:"Extra Sauce",
+    starters_items:[
+      ["Mimosa Eggs","6.00 €"],
+      ["Toasted Crottin de Chavignole","7.00 €"],
+      ["Burgundy Snails <small>x6 / x12</small>","6.50 € / 12.00 €"],
+      ["Confit Gizzard Salad","7.00 €"],
+      ["Two Salmon Terrine","8.00 €"]
+    ],
+    mains_items:[
+      ["Chicken Skewer","14.00 €"],
+      ["Pork Ribs","16.00 €"],
+      ["Beef Skewer","19.00 €"],
+      ["Lamb Skewer","19.00 €"],
+      ["Chef's Ribeye Steak","25.00 €"],
+      ["Chef's King Prawns","28.00 €"]
+    ],
+    desserts_items:[
+      ["3 Scoops of Ice Cream <small>(Milk Choc. · Dark Choc. · Lime · Lemon · Strawberry · Vanilla)</small>","6.00 €"],
+      ["Lemon Tart","7.00 €"],
+      ["Chocolate Fondant","7.00 €"],
+      ["Tarte Tatin","8.00 €"],
+      ["Colonel Coupe","8.00 €"],
+      ["3-Cheese Platter <small>(St Nectaire · Cantal · Rocamadour)</small>","10.00 €"]
+    ],
+    footnote:"All our meats are marinated and all our dishes are homemade",
+    mincb:"Minimum card payment 10 €",
+    drinks_titre:"Our Drinks",
+    aperitifs:"Aperitifs",
+    aperitifs_items:[["Kir","4.00 €"],["Kir Royal","6.00 €"],["Glass of Champagne","7.00 €"],["Pastis","4.00 €"]],
+    beers_pression:"Draft Beers",
+    demi:"Half Pint (25cl)", pint_label:"Pint (50cl)",
+    wines:"Wines",
+    wine_headers:["","Glass","Quarter","Carafe","Bottle"],
+    wine_rows:[["White","4.00 €","7.00 €","12.00 €","20.00 €"],["Rosé","4.00 €","7.00 €","12.00 €","20.00 €"],["Red","4.00 €","7.00 €","12.00 €","20.00 €"]],
+    bottled_beers:"Bottled Beers",
+    bottled_items:[["Kronenbourg 33cl","4.50 €"],["Leffe Blonde 33cl","5.00 €"],["Desperados 33cl","5.00 €"],["Heineken 0% 33cl","4.00 €"]],
+    digestifs:"Digestifs",
+    digestifs_items:[["Cognac","5.00 €"],["Calvados","5.00 €"],["Rum","5.00 €"],["Armagnac","5.00 €"]],
+    softs:"Soft Drinks",
+    water_title:"Mineral Water", water_list:"Evian 50cl · Badoit 50cl · Perrier 33cl", water_price:"3.00 €",
+    sodas_title:"Sodas", sodas_list:"Coca-Cola · Lemonade · Orangina · Schweppes Tonic", sodas_price:"3.00 €",
+    juice_title:"Fruit Juices", juice_list:"Apple · Orange · Strawberry · Pineapple", juice_price:"3.50 €",
+    tea_title:"Teas &amp; Infusions", tea_list:"Mint · Verbena · Chamomile · Earl Grey", tea_price:"3.00 €",
+    infos_titre:"Opening Hours &amp; Contact",
+    hours_title:"Opening Hours",
+    days:["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday"],
+    hours_list:["Closed","12:00 – 2:30pm / 7:00 – 10:30pm","12:00 – 2:30pm / 7:00 – 10:30pm","12:00 – 2:30pm / 7:00 – 10:30pm","12:00 – 2:30pm / 7:00 – 11:00pm","12:00 – 2:30pm / 7:00 – 11:00pm","12:00 – 3:00pm"],
+    contact_title:"Contact",
+    findus_title:"Find Us",
+    metro:"Métro Corvisart (line 6) · Place d'Italie (lines 5, 6, 7)"
+  },
+  it: {
+    nav_menu:"Menù", nav_drinks:"Bevande", nav_hours:"Orari", nav_contact:"Contatti",
+    menu_titre:"Il Nostro Menu",
+    starters:"Antipasti", mains:"Secondi Piatti", desserts:"Dolci",
+    mainsSubtitle:"Serviti con un contorno a scelta",
+    sidesTitle:"Contorni a scelta",
+    sides:"Fagiolini al Prezzemolo &nbsp;·&nbsp; Patate Novelle &nbsp;·&nbsp; Patatine Fritte Casalinghe &nbsp;·&nbsp; Insalata",
+    sideSuppl:"Supplemento Contorno", gratinSuppl:"Gratin Dauphinois al Tartufo",
+    saucesLine:"Salse a scelta : Pepe &nbsp;·&nbsp; Roquefort &nbsp;·&nbsp; Boscaiola",
+    sauceSuppl:"Supplemento Salsa",
+    starters_items:[
+      ["Uova Mimosa","6,00 €"],
+      ["Crottin de Chavignole Tostato","7,00 €"],
+      ["Lumache di Borgogna <small>x6 / x12</small>","6,50 € / 12,00 €"],
+      ["Insalata di Ventriglio Confit","7,00 €"],
+      ["Terrina ai Due Salmoni","8,00 €"]
+    ],
+    mains_items:[
+      ["Spiedino di Pollo","14,00 €"],
+      ["Costine di Maiale","16,00 €"],
+      ["Spiedino di Manzo","19,00 €"],
+      ["Spiedino d'Agnello","19,00 €"],
+      ["L'Entrecôte dello Chef","25,00 €"],
+      ["Gamberi del Chef","28,00 €"]
+    ],
+    desserts_items:[
+      ["3 Palline di Gelato a Scelta <small>(Cioccolato al Latte · Cioccolato Fondente · Limone Verde · Limone · Fragola · Vaniglia)</small>","6,00 €"],
+      ["Crostata al Limone","7,00 €"],
+      ["Tortino al Cioccolato","7,00 €"],
+      ["Tarte Tatin","8,00 €"],
+      ["Coppa Colonello","8,00 €"],
+      ["Piatto di 3 Formaggi <small>(St Nectaire · Cantal · Rocamadour)</small>","10,00 €"]
+    ],
+    footnote:"Tutte le nostre carni sono marinate e tutti i nostri piatti sono fatti in casa",
+    mincb:"Minimo carta 10 €",
+    drinks_titre:"Le Nostre Bevande",
+    aperitifs:"Aperitivi",
+    aperitifs_items:[["Kir","4,00 €"],["Kir Royal","6,00 €"],["Calice di Champagne","7,00 €"],["Pastis","4,00 €"]],
+    beers_pression:"Birre alla Spina",
+    demi:"Bicchiere (25cl)", pint_label:"Pinta (50cl)",
+    wines:"Vini",
+    wine_headers:["","Bicchiere","Quarto","Caraffa","Bottiglia"],
+    wine_rows:[["Bianco","4,00 €","7,00 €","12,00 €","20,00 €"],["Rosato","4,00 €","7,00 €","12,00 €","20,00 €"],["Rosso","4,00 €","7,00 €","12,00 €","20,00 €"]],
+    bottled_beers:"Birre in Bottiglia",
+    bottled_items:[["Kronenbourg 33cl","4,50 €"],["Leffe Blonde 33cl","5,00 €"],["Desperados 33cl","5,00 €"],["Heineken 0% 33cl","4,00 €"]],
+    digestifs:"Digestivi",
+    digestifs_items:[["Cognac","5,00 €"],["Calvados","5,00 €"],["Rum","5,00 €"],["Armagnac","5,00 €"]],
+    softs:"Analcolici",
+    water_title:"Acque Minerali", water_list:"Evian 50cl · Badoit 50cl · Perrier 33cl", water_price:"3,00 €",
+    sodas_title:"Bibite", sodas_list:"Coca-Cola · Limonata · Orangina · Schweppes Tonic", sodas_price:"3,00 €",
+    juice_title:"Succhi di Frutta", juice_list:"Mela · Arancia · Fragola · Ananas", juice_price:"3,50 €",
+    tea_title:"Tè &amp; Tisane", tea_list:"Menta · Verbena · Camomilla · Earl Grey", tea_price:"3,00 €",
+    infos_titre:"Orari &amp; Contatti",
+    hours_title:"Orari di Apertura",
+    days:["Lunedì","Martedì","Mercoledì","Giovedì","Venerdì","Sabato","Domenica"],
+    hours_list:["Chiuso","12:00 – 14:30 / 19:00 – 22:30","12:00 – 14:30 / 19:00 – 22:30","12:00 – 14:30 / 19:00 – 22:30","12:00 – 14:30 / 19:00 – 23:00","12:00 – 14:30 / 19:00 – 23:00","12:00 – 15:00"],
+    contact_title:"Contatti",
+    findus_title:"Come Trovarci",
+    metro:"Métro Corvisart (linea 6) · Place d'Italie (linee 5, 6, 7)"
+  },
+  es: {
+    nav_menu:"Carta", nav_drinks:"Bebidas", nav_hours:"Horarios", nav_contact:"Contacto",
+    menu_titre:"Nuestra Carta",
+    starters:"Entrantes", mains:"Platos Principales", desserts:"Postres",
+    mainsSubtitle:"Servidos con un acompañamiento a elegir",
+    sidesTitle:"Guarniciones a elegir",
+    sides:"Judías Verdes al Perejil &nbsp;·&nbsp; Patatas Baby &nbsp;·&nbsp; Patatas Fritas Caseras &nbsp;·&nbsp; Ensalada",
+    sideSuppl:"Suplemento Guarnición", gratinSuppl:"Gratén Dauphinois con Trufas",
+    saucesLine:"Salsas a elegir : Pimienta &nbsp;·&nbsp; Roquefort &nbsp;·&nbsp; Forestal",
+    sauceSuppl:"Suplemento Salsa",
+    starters_items:[
+      ["Huevos Mimosa","6,00 €"],
+      ["Crottin de Chavignole Tostado","7,00 €"],
+      ["Caracoles de Borgoña <small>x6 / x12</small>","6,50 € / 12,00 €"],
+      ["Ensalada de Mollejas Confitadas","7,00 €"],
+      ["Terrina de Dos Salmones","8,00 €"]
+    ],
+    mains_items:[
+      ["Brocheta de Pollo","14,00 €"],
+      ["Costillas de Cerdo","16,00 €"],
+      ["Brocheta de Ternera","19,00 €"],
+      ["Brocheta de Cordero","19,00 €"],
+      ["El Entrecot del Chef","25,00 €"],
+      ["Gambas del Chef","28,00 €"]
+    ],
+    desserts_items:[
+      ["3 Bolas de Helado a Elegir <small>(Choco. con Leche · Choco. Negro · Lima · Limón · Fresa · Vainilla)</small>","6,00 €"],
+      ["Tarta de Limón","7,00 €"],
+      ["Coulant de Chocolate","7,00 €"],
+      ["Tarte Tatin","8,00 €"],
+      ["Copa Coronel","8,00 €"],
+      ["Tabla de 3 Quesos <small>(St Nectaire · Cantal · Rocamadour)</small>","10,00 €"]
+    ],
+    footnote:"Todas nuestras carnes están marinadas y todos nuestros platos son caseros",
+    mincb:"Mínimo tarjeta 10 €",
+    drinks_titre:"Nuestras Bebidas",
+    aperitifs:"Aperitivos",
+    aperitifs_items:[["Kir","4,00 €"],["Kir Royal","6,00 €"],["Copa de Champán","7,00 €"],["Pastis","4,00 €"]],
+    beers_pression:"Cervezas de Grifo",
+    demi:"Caña (25cl)", pint_label:"Pinta (50cl)",
+    wines:"Vinos",
+    wine_headers:["","Copa","Cuarto","Jarra","Botella"],
+    wine_rows:[["Blanco","4,00 €","7,00 €","12,00 €","20,00 €"],["Rosado","4,00 €","7,00 €","12,00 €","20,00 €"],["Tinto","4,00 €","7,00 €","12,00 €","20,00 €"]],
+    bottled_beers:"Cervezas en Botella",
+    bottled_items:[["Kronenbourg 33cl","4,50 €"],["Leffe Blonde 33cl","5,00 €"],["Desperados 33cl","5,00 €"],["Heineken 0% 33cl","4,00 €"]],
+    digestifs:"Digestivos",
+    digestifs_items:[["Coñac","5,00 €"],["Calvados","5,00 €"],["Ron","5,00 €"],["Armagnac","5,00 €"]],
+    softs:"Refrescos",
+    water_title:"Aguas Minerales", water_list:"Evian 50cl · Badoit 50cl · Perrier 33cl", water_price:"3,00 €",
+    sodas_title:"Refrescos", sodas_list:"Coca-Cola · Limonada · Orangina · Schweppes Tonic", sodas_price:"3,00 €",
+    juice_title:"Zumos de Frutas", juice_list:"Manzana · Naranja · Fresa · Piña", juice_price:"3,50 €",
+    tea_title:"Tés &amp; Infusiones", tea_list:"Menta · Verbena · Manzanilla · Earl Grey", tea_price:"3,00 €",
+    infos_titre:"Horarios &amp; Contacto",
+    hours_title:"Horarios de Apertura",
+    days:["Lunes","Martes","Miércoles","Jueves","Viernes","Sábado","Domingo"],
+    hours_list:["Cerrado","12:00 – 14:30 / 19:00 – 22:30","12:00 – 14:30 / 19:00 – 22:30","12:00 – 14:30 / 19:00 – 22:30","12:00 – 14:30 / 19:00 – 23:00","12:00 – 14:30 / 19:00 – 23:00","12:00 – 15:00"],
+    contact_title:"Contacto",
+    findus_title:"Cómo Llegar",
+    metro:"Métro Corvisart (línea 6) · Place d'Italie (líneas 5, 6, 7)"
+  }
+};
+
+function renderMenu(lang) {
+  const t = T[lang];
+  const items = arr => arr.map(([n,p]) =>
+    `<div class="menu-item"><span class="menu-nom">${n}</span><span class="menu-prix">${p}</span></div>`
+  ).join('');
+  document.getElementById('menu-titre').textContent = t.menu_titre;
+  document.getElementById('menu-contenu').innerHTML = `
+    <div class="menu-bloc">
+      <div class="menu-categorie">${t.starters}</div>
+      ${items(t.starters_items)}
+    </div>
+    <div class="menu-bloc">
+      <div class="menu-categorie">${t.mains}</div>
+      <div class="menu-sous-titre">${t.mainsSubtitle}</div>
+      ${items(t.mains_items)}
+      <div class="menu-note">
+        <div class="menu-note-titre">${t.sidesTitle}</div>
+        <div class="menu-accomp">${t.sides}</div>
+        <div class="menu-suppl"><span class="menu-suppl-label">${t.sideSuppl}</span><span style="color:var(--or);">5,00 €</span></div>
+        <div class="menu-suppl"><span class="menu-suppl-label">${t.gratinSuppl}</span><span style="color:var(--or);">7,00 €</span></div>
+        <div class="menu-suppl-sauces">${t.saucesLine}</div>
+        <div class="menu-suppl"><span class="menu-suppl-label">${t.sauceSuppl}</span><span style="color:var(--or);">2,50 €</span></div>
+      </div>
+    </div>
+    <div class="menu-bloc">
+      <div class="menu-categorie">${t.desserts}</div>
+      ${items(t.desserts_items)}
+    </div>
+    <div class="menu-maison">${t.footnote}</div>
+    <div class="menu-cb">${t.mincb}</div>
+  `;
+}
+
+function renderBoissons(lang) {
+  const t = T[lang];
+  const bi = arr => arr.map(([n,p]) =>
+    `<div class="bois-item"><span class="bois-nom">${n}</span><span class="bois-prix">${p}</span></div>`
+  ).join('');
+  const wineRows = t.wine_rows.map(([nom,verre,quart,pichet,bout]) =>
+    `<div class="bois-vin-row">
+      <div class="bois-vin-nom">${nom}</div>
+      <div class="bois-vin-prix">${verre}</div>
+      <div class="bois-vin-prix">${quart}</div>
+      <div class="bois-vin-prix">${pichet}</div>
+      <div class="bois-vin-prix">${bout}</div>
+    </div>`
+  ).join('');
+  const wineHdr = t.wine_headers.map(h => `<div>${h}</div>`).join('');
+  document.getElementById('boissons-titre').textContent = t.drinks_titre;
+  document.getElementById('boissons-mincb').textContent = t.mincb;
+  document.getElementById('boissons-contenu').innerHTML = `
+    <div class="boissons-grid">
+      <div>
+        <div class="bois-bloc">
+          <div class="bois-categorie">${t.aperitifs}</div>
+          ${bi(t.aperitifs_items)}
+        </div>
+        <div class="bois-bloc">
+          <div class="bois-categorie">${t.beers_pression}</div>
+          <div class="bois-item"><span class="bois-nom">${t.demi}</span><span class="bois-prix">4,00 €</span></div>
+          <div class="bois-item"><span class="bois-nom">${t.pint_label}</span><span class="bois-prix">7,00 €</span></div>
+        </div>
+        <div class="bois-bloc">
+          <div class="bois-categorie">${t.bottled_beers}</div>
+          ${bi(t.bottled_items)}
+        </div>
+      </div>
+      <div>
+        <div class="bois-bloc">
+          <div class="bois-categorie">${t.wines}</div>
+          <div class="bois-vin-header">${wineHdr}</div>
+          ${wineRows}
+        </div>
+        <div class="bois-bloc">
+          <div class="bois-categorie">${t.digestifs}</div>
+          ${bi(t.digestifs_items)}
+        </div>
+        <div class="bois-bloc">
+          <div class="bois-categorie">${t.softs}</div>
+          <div class="bois-softs-group">
+            <div class="bois-softs-title">${t.water_title}</div>
+            <div class="bois-item"><span class="bois-nom bois-softs-list">${t.water_list}</span><span class="bois-prix">${t.water_price}</span></div>
+          </div>
+          <div class="bois-softs-group">
+            <div class="bois-softs-title">${t.sodas_title}</div>
+            <div class="bois-item"><span class="bois-nom bois-softs-list">${t.sodas_list}</span><span class="bois-prix">${t.sodas_price}</span></div>
+          </div>
+          <div class="bois-softs-group">
+            <div class="bois-softs-title">${t.juice_title}</div>
+            <div class="bois-item"><span class="bois-nom bois-softs-list">${t.juice_list}</span><span class="bois-prix">${t.juice_price}</span></div>
+          </div>
+          <div class="bois-softs-group">
+            <div class="bois-softs-title">${t.tea_title}</div>
+            <div class="bois-item"><span class="bois-nom bois-softs-list">${t.tea_list}</span><span class="bois-prix">${t.tea_price}</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  `;
+}
+
+function renderInfos(lang) {
+  const t = T[lang];
+  const closedWords = ["Fermé","Closed","Chiuso","Cerrado"];
+  const hoursRows = t.days.map((day, i) => {
+    const h = t.hours_list[i];
+    const isOff = closedWords.includes(h);
+    return `<div class="horaire-ligne">
+      <span class="horaire-jour">${day}</span>
+      <span class="horaire-heure"${isOff?' style="color:rgba(180,50,50,0.8)"':''}>${h}</span>
+    </div>`;
+  }).join('');
+  document.getElementById('infos-titre').textContent = t.infos_titre;
+  document.getElementById('infos').innerHTML = `
+    <div class="info-bloc">
+      <h3>${t.hours_title}</h3>
+      ${hoursRows}
+    </div>
+    <div class="info-bloc">
+      <h3>${t.contact_title}</h3>
+      <div class="contact-item"><span class="contact-icone">📍</span><span>11 rue de la Butte aux Cailles, 75013 Paris</span></div>
+      <div class="contact-item"><span class="contact-icone">📞</span><a href="tel:+33183961343">01 83 96 13 43</a></div>
+      <h3 style="margin-top:30px;">${t.findus_title}</h3>
+      <div class="contact-item"><span class="contact-icone">🚇</span><span>${t.metro}</span></div>
+    </div>
+  `;
+}
+
+function setLang(lang) {
+  document.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
+  document.querySelector(`.lang-btn[onclick="setLang('${lang}')"]`).classList.add('active');
+  renderMenu(lang);
+  renderBoissons(lang);
+  renderInfos(lang);
+  document.querySelectorAll('[data-i18n]').forEach(el => {
+    const key = el.getAttribute('data-i18n');
+    if (T[lang][key] !== undefined) el.textContent = T[lang][key];
+  });
+}
+
+renderMenu('fr');
+renderBoissons('fr');
+renderInfos('fr');
+</script>
+
+</body>
+</html>
