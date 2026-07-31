@@ -135,6 +135,18 @@
     </div>
   </section>
 
+  <!-- ÉCRAN 2bis : code personnel -->
+  <section id="ecranCode" class="hidden">
+    <div class="card">
+      <div class="titre" id="codeTitre">Ton code personnel</div>
+      <input id="codeInput" type="tel" inputmode="numeric" maxlength="6" placeholder="• • • •" autocomplete="off"
+             style="width:100%;padding:14px;font-size:1.6rem;text-align:center;letter-spacing:8px;border:1.5px solid #d5d9e0;border-radius:11px;margin-bottom:10px;">
+      <div id="codeErreur" class="hidden" style="color:#b3372f;font-size:.9rem;text-align:center;margin-bottom:10px;">Code incorrect. Réessaie ou vois avec la direction.</div>
+      <button class="btn-fermer" style="margin-top:4px" onclick="validerCode()">Valider</button>
+      <button class="lien-retour" onclick="allerEcranNom()">← Retour</button>
+    </div>
+  </section>
+
   <!-- ÉCRAN 3 : pointage -->
   <section id="ecranPointage" class="hidden">
     <div class="bandeau-attente hidden" id="bandeauAttente"></div>
@@ -214,9 +226,10 @@ let envoiEnCours = false;
 
 /* ---------- Navigation écrans ---------- */
 function montrer(ecran) {
-  ["ecranResto","ecranNom","ecranPointage"].forEach(e => $(e).classList.add("hidden"));
+  ["ecranResto","ecranNom","ecranCode","ecranPointage"].forEach(e => $(e).classList.add("hidden"));
   $(ecran).classList.remove("hidden");
 }
+let candidat = null;
 function allerEcranResto() {
   const div = $("listeRestos");
   div.innerHTML = "";
@@ -234,23 +247,43 @@ async function allerEcranNom() {
   $("nomsVide").classList.remove("hidden");
   $("nomsVide").textContent = "Chargement de la liste…";
   const employes = await chargerEmployes();
-  const noms = employes.filter(e => !e.restaurant || e.restaurant === restoChoisi).map(e => e.nom);
+  const liste = employes.filter(e => !e.restaurant || e.restaurant === restoChoisi);
   $("nomsVide").classList.add("hidden");
-  if (!noms.length) {
+  if (!liste.length) {
     $("nomsVide").textContent = "Liste des employés indisponible. Vérifie ta connexion ou vois avec la direction.";
     $("nomsVide").classList.remove("hidden");
     return;
   }
-  noms.forEach(n => {
+  liste.forEach(e => {
     const b = document.createElement("button");
-    b.textContent = n;
+    b.textContent = e.nom;
     b.onclick = () => {
-      profil = { nom: n, restaurant: restoChoisi };
-      localStorage.setItem(LS_PROFIL, JSON.stringify(profil));
-      allerEcranPointage();
+      candidat = { nom: e.nom, restaurant: restoChoisi, code: e.code || "" };
+      if (!candidat.code) { enregistrerProfil(); }
+      else { allerEcranCode(); }
     };
     $("listeNoms").appendChild(b);
   });
+}
+function enregistrerProfil() {
+  profil = candidat;
+  localStorage.setItem(LS_PROFIL, JSON.stringify(profil));
+  allerEcranPointage();
+}
+function allerEcranCode() {
+  $("codeTitre").textContent = candidat.nom + " — ton code personnel";
+  $("codeInput").value = "";
+  $("codeErreur").classList.add("hidden");
+  montrer("ecranCode");
+  $("codeInput").focus();
+}
+function validerCode() {
+  if ($("codeInput").value.trim() === candidat.code) { enregistrerProfil(); }
+  else {
+    $("codeErreur").classList.remove("hidden");
+    $("codeInput").value = "";
+    $("codeInput").focus();
+  }
 }
 function allerEcranPointage() {
   $("lblBonjour").textContent = "Bonjour " + profil.nom + " 👋";
@@ -276,9 +309,9 @@ async function chargerEmployes() {
       const lignes = txt.split(/\r?\n/).map(l => l.trim()).filter(Boolean);
       const emp = [];
       for (const l of lignes) {
-        const [nom, restaurant] = l.split(/[\t,;]/).map(c => c.replace(/^"|"$/g, "").trim());
+        const [nom, restaurant, code] = l.split(/[\t,;]/).map(c => c.replace(/^"|"$/g, "").trim());
         if (!nom || /^nom$/i.test(nom)) continue;   // saute l'en-tête
-        emp.push({ nom, restaurant: restaurant || "" });
+        emp.push({ nom, restaurant: restaurant || "", code: code || "" });
       }
       if (emp.length) {
         localStorage.setItem(LS_CACHE_EMP, JSON.stringify(emp));
@@ -467,6 +500,32 @@ function rafraichirHisto() {
 /* ---------- Démarrage ---------- */
 if (profil) allerEcranPointage();
 else allerEcranResto();
+
+(async () => {
+  /* Inscription automatique via QR personnalisé : pointage.html?e=Nom&c=Code */
+  const params = new URLSearchParams(location.search);
+  const pNom = (params.get("e") || "").trim(), pCode = (params.get("c") || "").trim();
+  if (pNom && (!profil || profil.nom !== pNom)) {
+    const emp = await chargerEmployes();
+    const e = emp.find(x => x.nom.toLowerCase() === pNom.toLowerCase());
+    if (e && (!e.code || e.code === pCode)) {
+      profil = { nom: e.nom, restaurant: e.restaurant, code: e.code || "" };
+      localStorage.setItem(LS_PROFIL, JSON.stringify(profil));
+      allerEcranPointage();
+      return;
+    }
+  }
+  /* Revalidation du profil : si le code de l'employé a changé (ou l'employé retiré), retour à l'accueil */
+  if (!profil) return;
+  const emp = await chargerEmployes();
+  if (!emp.length) return;           // hors connexion : on garde le profil
+  const e = emp.find(x => x.nom === profil.nom);
+  if (!e || (e.code && e.code !== (profil.code || ""))) {
+    localStorage.removeItem(LS_PROFIL);
+    profil = null;
+    allerEcranResto();
+  }
+})();
 </script>
 </body>
 </html>
