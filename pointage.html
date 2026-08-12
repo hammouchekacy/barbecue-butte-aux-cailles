@@ -368,16 +368,26 @@ async function lancerPointage(action) {
     pos = await new Promise((res, rej) =>
       navigator.geolocation.getCurrentPosition(res, rej, { enableHighAccuracy:true, timeout:15000, maximumAge:0 })
     );
-  } catch (e) { /* refusée ou indisponible → pointage quand même, signalé */ }
+  } catch (e) { /* refusée ou indisponible */ }
 
-  let lat = "", lon = "", prec = "", dist = "", statut = "SANS GPS";
-  if (pos) {
-    lat  = pos.coords.latitude.toFixed(6);
-    lon  = pos.coords.longitude.toFixed(6);
-    prec = Math.round(pos.coords.accuracy);
-    dist = distanceMetres(pos.coords.latitude, pos.coords.longitude, CONFIG.ZONE.lat, CONFIG.ZONE.lon);
-    statut = (dist <= CONFIG.ZONE.rayon + Math.min(prec, 100)) ? "OK" : "HORS ZONE";
+  if (!pos) {
+    /* GPS obligatoire : sans position, le pointage est refusé */
+    afficherStatut(
+      '<div class="rond rond-attention">!</div><h2>Pointage impossible</h2>' +
+      '<p>La localisation est <strong>obligatoire</strong> pour pointer.<br>' +
+      'Active le GPS et autorise la localisation pour ce site dans les réglages de ton téléphone, puis réessaie.</p>' +
+      '<button class="btn-fermer" onclick="fermerStatut()">Fermer</button>'
+    );
+    envoiEnCours = false;
+    $("btnArrivee").disabled = $("btnDepart").disabled = false;
+    return;
   }
+
+  const lat  = pos.coords.latitude.toFixed(6);
+  const lon  = pos.coords.longitude.toFixed(6);
+  const prec = Math.round(pos.coords.accuracy);
+  const dist = distanceMetres(pos.coords.latitude, pos.coords.longitude, CONFIG.ZONE.lat, CONFIG.ZONE.lon);
+  const statut = (dist <= CONFIG.ZONE.rayon + Math.min(prec, 100)) ? "OK" : "HORS ZONE";
 
   const p = {
     horodatage: new Date().toISOString(),
