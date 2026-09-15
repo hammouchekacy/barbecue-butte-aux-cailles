@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<meta name="theme-color" content="#1a7f4e">
+<title>Sport — Butte aux Cailles</title>
+<style>
+  * { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+  html, body { height:100%; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    background:#f4f2ec; color:#20242b; display:flex; flex-direction:column;
+  }
+  header {
+    background:#1a7f4e; color:#fff; padding:14px 18px; text-align:center;
+    box-shadow:0 2px 8px rgba(0,0,0,.18);
+  }
+  header h1 { font-size:1.05rem; font-weight:600; letter-spacing:.3px; }
+  header .sub { font-size:.78rem; opacity:.85; margin-top:2px; }
+  main { flex:1; width:100%; max-width:430px; margin:0 auto; padding:20px 16px 30px; }
+
+  .card {
+    background:#fff; border-radius:14px; padding:18px;
+    box-shadow:0 1px 4px rgba(0,0,0,.08); margin-bottom:14px;
+  }
+  .titre { font-size:1rem; font-weight:600; color:#1a7f4e; margin-bottom:4px; }
+  .sous-titre { font-size:.82rem; color:#5a6a80; margin-bottom:12px; }
+
+  .date { text-align:center; color:#5a6a80; font-size:.92rem; margin-bottom:16px; text-transform:capitalize; }
+
+  .exo {
+    display:flex; justify-content:space-between; align-items:center; gap:10px;
+    padding:11px 2px; border-bottom:1px solid #eef0f3;
+  }
+  .exo:last-child { border-bottom:none; }
+  .exo-infos { flex:1; }
+  .exo-nom { font-size:.98rem; font-weight:500; }
+  .exo-detail { font-size:.8rem; color:#5a6a80; margin-top:2px; }
+  .exo-series { display:flex; gap:6px; }
+  .serie {
+    width:34px; height:34px; border-radius:50%; border:1.5px solid #d5d9e0;
+    background:#fafbfc; color:#8a94a3; font-size:.85rem; font-weight:600; cursor:pointer;
+  }
+  .serie.faite { background:#1a7f4e; border-color:#1a7f4e; color:#fff; }
+
+  .progression { margin-top:14px; }
+  .barre { height:8px; border-radius:6px; background:#e8eaee; overflow:hidden; }
+  .barre div { height:100%; background:#1a7f4e; width:0; transition:width .25s; }
+  .progression p { font-size:.82rem; color:#5a6a80; margin-top:6px; text-align:center; }
+
+  .bravo {
+    background:#e2f3ea; color:#146540; font-size:.9rem; padding:12px 14px;
+    border-radius:11px; margin-bottom:14px; text-align:center; font-weight:600;
+  }
+  .hidden { display:none !important; }
+
+  .btn-reset {
+    margin-top:14px; width:100%; padding:13px; border:none; border-radius:11px;
+    background:#e8eaee; color:#20242b; font-size:.95rem; font-weight:600; cursor:pointer;
+  }
+
+  .histo { list-style:none; }
+  .histo li {
+    display:flex; justify-content:space-between; align-items:center;
+    padding:9px 2px; border-bottom:1px solid #eef0f3; font-size:.92rem;
+  }
+  .histo li:last-child { border-bottom:none; }
+  .badge { font-size:.76rem; font-weight:600; padding:3px 9px; border-radius:20px; }
+  .badge-complet { background:#e2f3ea; color:#146540; }
+  .badge-partiel { background:#fdf1dc; color:#8a5f10; }
+  .vide { color:#8a94a3; font-size:.9rem; text-align:center; padding:8px 0; }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>Sport 💪</h1>
+  <div class="sub">Séance banc — Butte aux Cailles</div>
+</header>
+
+<main>
+  <div class="date" id="dateJour"></div>
+
+  <div class="bravo hidden" id="bravo">🎉 Séance complète, bravo !</div>
+
+  <!-- Séance au banc -->
+  <div class="card">
+    <div class="titre">🪑 Travail au banc</div>
+    <div class="sous-titre">Coche chaque série effectuée</div>
+    <div id="listeExos"></div>
+    <div class="progression">
+      <div class="barre"><div id="barreProgress"></div></div>
+      <p id="lblProgress">0 série sur 0</p>
+    </div>
+    <button class="btn-reset" onclick="resetJour()">Recommencer la séance du jour</button>
+  </div>
+
+  <!-- Historique -->
+  <div class="card">
+    <div class="titre">Mes dernières séances</div>
+    <ul class="histo" id="histoListe"></ul>
+    <div class="vide hidden" id="histoVide">Aucune séance pour l'instant.</div>
+  </div>
+</main>
+
+<script>
+/* ================= SÉANCE AU BANC =================
+   Programme d'exercices réalisables avec un simple banc. */
+const EXERCICES = [
+  { id:"pompes-inclinees",  nom:"Pompes inclinées",        detail:"Mains sur le banc · 12 répétitions", series:3 },
+  { id:"dips",              nom:"Dips sur banc",           detail:"Triceps · 10 répétitions",           series:3 },
+  { id:"step-ups",          nom:"Step-ups",                detail:"Montées sur le banc · 10 par jambe", series:3 },
+  { id:"squats-bulgares",   nom:"Squats bulgares",         detail:"Pied arrière sur le banc · 8 par jambe", series:3 },
+  { id:"gainage",           nom:"Gainage pieds surélevés", detail:"Pieds sur le banc · 30 secondes",    series:3 },
+  { id:"crunchs",           nom:"Crunchs sur banc",        detail:"Abdos · 15 répétitions",             series:3 }
+];
+/* ================================================== */
+
+const $ = id => document.getElementById(id);
+const LS_SEANCES = "sport_seances";
+
+const cleJour = () => new Date().toISOString().slice(0, 10);
+const totalSeries = EXERCICES.reduce((s, e) => s + e.series, 0);
+
+let seances = JSON.parse(localStorage.getItem(LS_SEANCES) || "{}");
+let jour = seances[cleJour()] || {};
+
+function sauver() {
+  seances[cleJour()] = jour;
+  localStorage.setItem(LS_SEANCES, JSON.stringify(seances));
+}
+
+function basculerSerie(exoId, i) {
+  const faites = jour[exoId] || [];
+  faites[i] = !faites[i];
+  jour[exoId] = faites;
+  sauver();
+  rendre();
+}
+
+function seriesFaites(j) {
+  return Object.values(j).reduce((s, arr) => s + arr.filter(Boolean).length, 0);
+}
+
+function rendre() {
+  const div = $("listeExos");
+  div.innerHTML = "";
+  EXERCICES.forEach(e => {
+    const faites = jour[e.id] || [];
+    const ligne = document.createElement("div");
+    ligne.className = "exo";
+    const boutons = Array.from({ length: e.series }, (_, i) =>
+      '<button class="serie' + (faites[i] ? ' faite' : '') + '" onclick="basculerSerie(\'' + e.id + '\',' + i + ')">' + (i + 1) + '</button>'
+    ).join("");
+    ligne.innerHTML =
+      '<div class="exo-infos"><div class="exo-nom">' + e.nom + '</div><div class="exo-detail">' + e.detail + '</div></div>' +
+      '<div class="exo-series">' + boutons + '</div>';
+    div.appendChild(ligne);
+  });
+
+  const n = seriesFaites(jour);
+  $("barreProgress").style.width = (totalSeries ? Math.round(100 * n / totalSeries) : 0) + "%";
+  $("lblProgress").textContent = n + " série" + (n > 1 ? "s" : "") + " sur " + totalSeries;
+  $("bravo").classList.toggle("hidden", n < totalSeries);
+  rendreHisto();
+}
+
+function rendreHisto() {
+  const ul = $("histoListe");
+  ul.innerHTML = "";
+  const jours = Object.keys(seances).sort().reverse().slice(0, 8);
+  $("histoVide").classList.toggle("hidden", jours.length > 0);
+  jours.forEach(k => {
+    const n = seriesFaites(seances[k] || {});
+    if (!n) return;
+    const li = document.createElement("li");
+    const d = new Date(k + "T12:00:00");
+    const complet = n >= totalSeries;
+    li.innerHTML =
+      "<span>" + d.toLocaleDateString("fr-FR", { weekday:"short", day:"2-digit", month:"2-digit" }) +
+      " · <strong>" + n + "/" + totalSeries + " séries</strong></span>" +
+      '<span class="badge ' + (complet ? 'badge-complet">Complète' : 'badge-partiel">En cours') + "</span>";
+    ul.appendChild(li);
+  });
+}
+
+function resetJour() {
+  if (!confirm("Effacer les séries cochées aujourd'hui ?")) return;
+  jour = {};
+  sauver();
+  rendre();
+}
+
+$("dateJour").textContent = new Date().toLocaleDateString("fr-FR", { weekday:"long", day:"numeric", month:"long", year:"numeric" });
+rendre();
+</script>
+</body>
+</html>
