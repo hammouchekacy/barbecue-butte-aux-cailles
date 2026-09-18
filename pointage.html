@@ -3,6 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<meta name="robots" content="noindex, nofollow">
 <meta name="theme-color" content="#1F4E79">
 <title>Pointage — Butte aux Cailles</title>
 <style>
@@ -147,6 +148,21 @@
     </div>
   </section>
 
+  <!-- ÉCRAN caché : générateur d'empreintes pour le Google Sheet (ouvrir pointage.html#generateur) -->
+  <section id="ecranHash" class="hidden">
+    <div class="card">
+      <div class="titre">Générateur d'empreintes (direction)</div>
+      <p style="font-size:.88rem;color:#4a5568;margin-bottom:12px;">
+        Tape un code personnel : l'empreinte à coller dans la colonne « code »
+        du Google Sheet s'affiche. Le code lui-même n'apparaîtra plus dans le CSV publié.
+      </p>
+      <input id="hashInput" type="text" inputmode="numeric" autocomplete="off" placeholder="Code personnel"
+             style="width:100%;padding:14px;font-size:1.2rem;text-align:center;border:1.5px solid #d5d9e0;border-radius:11px;margin-bottom:10px;">
+      <button class="btn-fermer" style="margin-top:4px" onclick="genererHash()">Générer l'empreinte</button>
+      <div id="hashSortie" class="hidden" style="margin-top:14px;padding:12px;background:#fafbfc;border:1.5px solid #d5d9e0;border-radius:11px;font-family:monospace;font-size:.78rem;word-break:break-all;"></div>
+    </div>
+  </section>
+
   <!-- ÉCRAN 3 : pointage -->
   <section id="ecranPointage" class="hidden">
     <div class="bandeau-attente hidden" id="bandeauAttente"></div>
@@ -226,7 +242,7 @@ let envoiEnCours = false;
 
 /* ---------- Navigation écrans ---------- */
 function montrer(ecran) {
-  ["ecranResto","ecranNom","ecranCode","ecranPointage"].forEach(e => $(e).classList.add("hidden"));
+  ["ecranResto","ecranNom","ecranCode","ecranPointage","ecranHash"].forEach(e => $(e).classList.add("hidden"));
   $(ecran).classList.remove("hidden");
 }
 let candidat = null;
@@ -277,8 +293,25 @@ function allerEcranCode() {
   montrer("ecranCode");
   $("codeInput").focus();
 }
-function validerCode() {
-  if ($("codeInput").value.trim() === candidat.code) { enregistrerProfil(); }
+/* Codes hachés : la colonne "code" du Google Sheet peut contenir
+   soit le code en clair, soit son empreinte SHA-256 (64 caractères
+   hexadécimaux, générée via pointage.html#generateur) — ainsi les
+   codes ne sont plus lisibles dans le CSV publié. */
+const EST_HASH = c => /^[0-9a-f]{64}$/i.test(c || "");
+async function sha256(txt) {
+  const buf = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(txt));
+  return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2, "0")).join("");
+}
+async function codeCorrect(saisie, attendu) {
+  if (!attendu) return true;
+  if (EST_HASH(attendu)) {
+    try { return (await sha256(saisie)).toLowerCase() === attendu.toLowerCase(); }
+    catch (e) { return false; }   // crypto indisponible (page servie hors HTTPS)
+  }
+  return saisie === attendu;
+}
+async function validerCode() {
+  if (await codeCorrect($("codeInput").value.trim(), candidat.code)) { enregistrerProfil(); }
   else {
     $("codeErreur").classList.remove("hidden");
     $("codeInput").value = "";
@@ -507,8 +540,22 @@ function rafraichirHisto() {
   });
 }
 
+/* ---------- Générateur d'empreintes (écran caché) ---------- */
+async function genererHash() {
+  const code = $("hashInput").value.trim();
+  if (!code) return;
+  try {
+    $("hashSortie").textContent = await sha256(code);
+    $("hashSortie").classList.remove("hidden");
+  } catch (e) {
+    $("hashSortie").textContent = "Indisponible : ouvre la page en HTTPS (adresse en https://…).";
+    $("hashSortie").classList.remove("hidden");
+  }
+}
+
 /* ---------- Démarrage ---------- */
-if (profil) allerEcranPointage();
+if (location.hash === "#generateur") montrer("ecranHash");
+else if (profil) allerEcranPointage();
 else allerEcranResto();
 
 (async () => {
@@ -518,7 +565,7 @@ else allerEcranResto();
   if (pNom && (!profil || profil.nom !== pNom)) {
     const emp = await chargerEmployes();
     const e = emp.find(x => x.nom.toLowerCase() === pNom.toLowerCase());
-    if (e && (!e.code || e.code === pCode)) {
+    if (e && (await codeCorrect(pCode, e.code))) {
       profil = { nom: e.nom, restaurant: e.restaurant, code: e.code || "" };
       localStorage.setItem(LS_PROFIL, JSON.stringify(profil));
       allerEcranPointage();
