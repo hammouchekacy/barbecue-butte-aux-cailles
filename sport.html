@@ -76,7 +76,7 @@
 
 <header>
   <h1>Sport 💪</h1>
-  <div class="sub">Séance banc — Butte aux Cailles</div>
+  <div class="sub">Séance par matériel — Butte aux Cailles</div>
 </header>
 
 <main>
@@ -84,12 +84,11 @@
 
   <div class="bravo hidden" id="bravo">🎉 Séance complète, bravo !</div>
 
-  <!-- Séance au banc -->
+  <!-- Une carte par matériel, générée par le script -->
+  <div id="listeMateriel"></div>
+
   <div class="card">
-    <div class="titre">🪑 Travail au banc</div>
-    <div class="sous-titre">Coche chaque série effectuée</div>
-    <div id="listeExos"></div>
-    <div class="progression">
+    <div class="progression" style="margin-top:0;">
       <div class="barre"><div id="barreProgress"></div></div>
       <p id="lblProgress">0 série sur 0</p>
     </div>
@@ -105,23 +104,60 @@
 </main>
 
 <script>
-/* ================= SÉANCE AU BANC =================
-   Programme d'exercices réalisables avec un simple banc. */
-const EXERCICES = [
-  { id:"pompes-inclinees",  nom:"Pompes inclinées",        detail:"Mains sur le banc · 12 répétitions", series:3 },
-  { id:"dips",              nom:"Dips sur banc",           detail:"Triceps · 10 répétitions",           series:3 },
-  { id:"step-ups",          nom:"Step-ups",                detail:"Montées sur le banc · 10 par jambe", series:3 },
-  { id:"squats-bulgares",   nom:"Squats bulgares",         detail:"Pied arrière sur le banc · 8 par jambe", series:3 },
-  { id:"gainage",           nom:"Gainage pieds surélevés", detail:"Pieds sur le banc · 30 secondes",    series:3 },
-  { id:"crunchs",           nom:"Crunchs sur banc",        detail:"Abdos · 15 répétitions",             series:3 }
+/* ================= SÉANCE PAR MATÉRIEL =================
+   Une carte par matériel. Deux poulies distinctes :
+   - Poulie réglable : on est debout, hauteur de la poulie
+     ajustable selon l'exercice (haute / moyenne / basse) ;
+   - Poulie tirage : station de tirage avec un banc (assis). */
+const MATERIEL = [
+  {
+    id: "banc",
+    icone: "🪑",
+    nom: "Banc",
+    note: "Travail au poids du corps sur le banc",
+    exercices: [
+      { id:"pompes-inclinees",  nom:"Pompes inclinées",        detail:"Mains sur le banc · 12 répétitions", series:3 },
+      { id:"dips",              nom:"Dips sur banc",           detail:"Triceps · 10 répétitions",           series:3 },
+      { id:"step-ups",          nom:"Step-ups",                detail:"Montées sur le banc · 10 par jambe", series:3 },
+      { id:"squats-bulgares",   nom:"Squats bulgares",         detail:"Pied arrière sur le banc · 8 par jambe", series:3 },
+      { id:"gainage",           nom:"Gainage pieds surélevés", detail:"Pieds sur le banc · 30 secondes",    series:3 },
+      { id:"crunchs",           nom:"Crunchs sur banc",        detail:"Abdos · 15 répétitions",             series:3 }
+    ]
+  },
+  {
+    id: "poulie-reglable",
+    icone: "🧍",
+    nom: "Poulie réglable (debout)",
+    note: "Debout — règle la hauteur de la poulie selon l'exercice",
+    exercices: [
+      { id:"ecartes-poulie",    nom:"Écartés à la poulie",     detail:"Poulie haute · pectoraux · 12 répétitions", series:3 },
+      { id:"face-pull",         nom:"Tirage visage (face pull)", detail:"Poulie haute · épaules/dos · 12 répétitions", series:3 },
+      { id:"extension-triceps", nom:"Extensions triceps",      detail:"Poulie haute · corde · 12 répétitions", series:3 },
+      { id:"curl-biceps",       nom:"Curl biceps",             detail:"Poulie basse · 12 répétitions",      series:3 },
+      { id:"elevations-lat",    nom:"Élévations latérales",    detail:"Poulie basse · épaules · 12 répétitions", series:3 },
+      { id:"pallof-press",      nom:"Pallof press",            detail:"Poulie moyenne · gainage · 10 par côté", series:3 }
+    ]
+  },
+  {
+    id: "poulie-tirage",
+    icone: "🚣",
+    nom: "Poulie tirage (avec banc)",
+    note: "Assis sur le banc de la station de tirage",
+    exercices: [
+      { id:"tirage-vertical",   nom:"Tirage vertical",         detail:"Barre large · dos · 10 répétitions", series:3 },
+      { id:"tirage-poitrine",   nom:"Tirage poitrine prise serrée", detail:"Triangle · dos · 10 répétitions", series:3 },
+      { id:"tirage-horizontal", nom:"Tirage horizontal (rowing)", detail:"Assis · dos/bras · 12 répétitions", series:3 }
+    ]
+  }
 ];
-/* ================================================== */
+/* ======================================================= */
 
 const $ = id => document.getElementById(id);
 const LS_SEANCES = "sport_seances";
 
 const cleJour = () => new Date().toISOString().slice(0, 10);
-const totalSeries = EXERCICES.reduce((s, e) => s + e.series, 0);
+const TOUS_EXOS = MATERIEL.flatMap(m => m.exercices);
+const totalSeries = TOUS_EXOS.reduce((s, e) => s + e.series, 0);
 
 let seances = JSON.parse(localStorage.getItem(LS_SEANCES) || "{}");
 let jour = seances[cleJour()] || {};
@@ -144,19 +180,25 @@ function seriesFaites(j) {
 }
 
 function rendre() {
-  const div = $("listeExos");
-  div.innerHTML = "";
-  EXERCICES.forEach(e => {
-    const faites = jour[e.id] || [];
-    const ligne = document.createElement("div");
-    ligne.className = "exo";
-    const boutons = Array.from({ length: e.series }, (_, i) =>
-      '<button class="serie' + (faites[i] ? ' faite' : '') + '" onclick="basculerSerie(\'' + e.id + '\',' + i + ')">' + (i + 1) + '</button>'
-    ).join("");
-    ligne.innerHTML =
-      '<div class="exo-infos"><div class="exo-nom">' + e.nom + '</div><div class="exo-detail">' + e.detail + '</div></div>' +
-      '<div class="exo-series">' + boutons + '</div>';
-    div.appendChild(ligne);
+  const conteneur = $("listeMateriel");
+  conteneur.innerHTML = "";
+  MATERIEL.forEach(m => {
+    const carte = document.createElement("div");
+    carte.className = "card";
+    const lignes = m.exercices.map(e => {
+      const faites = jour[e.id] || [];
+      const boutons = Array.from({ length: e.series }, (_, i) =>
+        '<button class="serie' + (faites[i] ? ' faite' : '') + '" onclick="basculerSerie(\'' + e.id + '\',' + i + ')">' + (i + 1) + '</button>'
+      ).join("");
+      return '<div class="exo">' +
+        '<div class="exo-infos"><div class="exo-nom">' + e.nom + '</div><div class="exo-detail">' + e.detail + '</div></div>' +
+        '<div class="exo-series">' + boutons + '</div></div>';
+    }).join("");
+    carte.innerHTML =
+      '<div class="titre">' + m.icone + ' ' + m.nom + '</div>' +
+      '<div class="sous-titre">' + m.note + '</div>' +
+      lignes;
+    conteneur.appendChild(carte);
   });
 
   const n = seriesFaites(jour);
