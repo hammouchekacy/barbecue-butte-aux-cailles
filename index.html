@@ -373,7 +373,7 @@ const T = {
     sauceSuppl:"Supplément Sauce",
     starters_items:[
       ["Oeufs Mimosa","6,00 €"],
-      ["Crottin de Chavignole Toasté","7,00 €"],
+      ["Crottin de Chavignol Toasté","7,00 €"],
       ["Escargots de Bourgogne <small>x6 / x12</small>","6,50 € / 12,00 €"],
       ["Salade de Gésiers Confits","7,50 €"],
       ["Terrine aux Deux Saumons","8,00 €"]
@@ -384,7 +384,8 @@ const T = {
       ["Brochette de Boeuf","19,00 €"],
       ["Brochette d'Agneau","19,00 €"],
       ["L'Entrecôte du Chef","26,00 €"],
-      ["Gambas du Chef","28,00 €"]
+      ["Gambas du Chef","28,00 €"],
+      ["Brochette Végétarienne <small>(Tofu mariné, courgette, poivron, aubergine, champignons, oignon rouge, tomate cerise — crème de feta ou sauce à l'ail · Allergènes : soja, gluten, lait)</small>","18,00 €"]
     ],
     desserts_items:[
       ["3 Boules de Glaces au Choix <small>(Chocolat au Lait · Chocolat Noir · Citron Vert · Citron Jaune · Fraise · Vanille)</small>","6,00 €"],
@@ -397,15 +398,16 @@ const T = {
     footnote:"Toutes nos viandes sont marinées et tous nos plats sont faits Maison",
     mincb:"Formule Entrée Plat Dessert -10%",
     drinks_titre:"Nos Boissons",
-    aperitifs:"Apéritifs",
-    aperitifs_items:[["Kir Maison (15cl)","5,00 €"],["Martini Blanc (7cl)","6,00 €"],["Ricard (3cl)","4,00 €"],["Jameson (5cl)","8,00 €"],["Apérol Spritz","8,00 €"],["Porto","6,00 €"]],
-    beers_pression:"Bières Pression",
+    aperitifs:"Alcools",
+    aperitifs_items:[["Kir Maison (15cl)","5,00 €"],["Martini Blanc (7cl)","6,00 €"],["Ricard (2cl)","3,50 €"],["Jameson / J&amp;B (4cl)","8,00 €"],["Apérol Spritz <small style=\"color:rgba(255,255,255,0.35);\">HH 8,00 €</small>","10,00 €"],["Porto (7cl)","6,00 €"],["Get 27 (5cl)","7,00 €"],["Cognac Hennessy (5cl)","9,50 €"],["Poire William","9,50 €"],["Jack Daniel's (4cl)","9,50 €"]],
+    beers_pression:"Bières", draught:"En pression", bottles:"En bouteille",
+    beer_rows:[["Campus (Blonde)","4,50 €","7,00 €","5,00 €"],["Cadette (IPA)","5,50 €","9,50 €","7,50 €"]],
     demi:"Demi (25cl)", demi_price:"4,50 €", pint_label:"Pinte (50cl)", pint_price:"7,00 €", pint_hh:"5,00 €",
     wines:"Vins",
     wine_headers:["","Verre","Quart","Pichet","Bouteille"],
     wines_named:[["Chardonnay IGP 2023","Maison Fernand Vallière","Blanc","6,00 €","11,00 €","18,00 €","25,00 €"],["Rosé Gris IGP","Pur Style","Rosé","6,00 €","11,00 €","18,00 €","25,00 €"],["Brouilly AOP 2023","Maison Fernand Vallière","Rouge","6,00 €","11,00 €","19,00 €","26,00 €"],["Côte du Rhône AOP 2023","Prieurs St Julien","Rouge","6,50 €","12,00 €","20,00 €","28,00 €"],["Saint Estèphe (75cl)","","Rouge","–","–","–","42,00 €"]],
     bottled_beers:"Bières en Bouteille",
-    bottled_items:[["Triple Karmelite Blonde 33cl","8,00 €"],["Vedette IPA 33cl","8,00 €"],["Chimay Dorée 33cl","7,50 €"]],
+    bottled_items:[["Triple Karmelite Blonde (33cl)","8,00 €"],["Vedette IPA (33cl)","8,00 €"],["Chimay Dorée (33cl)","7,50 €"]],
     digestifs:"Digestifs",
     digestifs_items:[["Get 27 (5cl)","7,00 €"],["Cognac Hennessy (5cl)","9,50 €"],["Poire William","9,50 €"]],
     softs:"Softs",
@@ -414,10 +416,10 @@ const T = {
     juice_title:"Jus de Fruits", juice_list:"Pomme · Orange · Ananas (25cl)", juice_price:"5,00 €",
     tea_title:"Thés &amp; Infusions Bio Malongo", tea_list:"Earl Grey · Menthe · Citron · Vert Jasmin · Verveine · Fruits Rouges", tea_price:"4,00 €",
     cafe_title:"Café", cafe_list:"Expresso 100% Arabica", cafe_price:"2,50 €",
-    infos_titre:"Horaires &amp; Contact",
+    infos_titre:"Horaires & Contact",
     hours_title:"Horaires d'Ouverture",
     days:["Lundi","Mardi","Mercredi","Jeudi","Vendredi","Samedi","Dimanche"],
-    hours_list:["Fermé","12h00 – 14h30 / 19h00 – 22h30","12h00 – 14h30 / 19h00 – 22h30","12h00 – 14h30 / 19h00 – 22h30","12h00 – 14h30 / 19h00 – 23h00","12h00 – 14h30 / 19h00 – 23h00","12h00 – 15h00"],
+    hours_list:["Fermé","19h00 · dernière commande 22h30","19h00 · dernière commande 22h30","19h00 · dernière commande 22h30","19h00 · dernière commande 22h30","12h00 · dernière commande 14h30<br>19h00 · dernière commande 22h30","12h00 · dernière commande 14h30<br>19h00 · dernière commande 22h30"],
     contact_title:"Contact",
     findus_title:"Nous Trouver",
     metro:"Métro Corvisart (ligne 6) · Place d'Italie (lignes 5, 6, 7)"
@@ -434,7 +436,7 @@ const T = {
     sauceSuppl:"Extra Sauce",
     starters_items:[
       ["Mimosa Eggs","6.00 €"],
-      ["Toasted Crottin de Chavignole","7.00 €"],
+      ["Toasted Crottin de Chavignol","7.00 €"],
       ["Burgundy Snails <small>x6 / x12</small>","6.50 € / 12.00 €"],
       ["Confit Gizzard Salad","7.50 €"],
       ["Two Salmon Terrine","8.00 €"]
@@ -445,7 +447,8 @@ const T = {
       ["Beef Skewer","19.00 €"],
       ["Lamb Skewer","19.00 €"],
       ["Chef's Ribeye Steak","26.00 €"],
-      ["Chef's King Prawns","28.00 €"]
+      ["Chef's King Prawns","28.00 €"],
+      ["Vegetarian Skewer <small>(Marinated tofu, courgette, pepper, aubergine, mushrooms, red onion, cherry tomato — feta cream or garlic sauce · Allergens: soy, gluten, milk)</small>","18.00 €"]
     ],
     desserts_items:[
       ["3 Scoops of Ice Cream <small>(Milk Choc. · Dark Choc. · Lime · Lemon · Strawberry · Vanilla)</small>","6.00 €"],
@@ -458,15 +461,16 @@ const T = {
     footnote:"All our meats are marinated and all our dishes are homemade",
     mincb:"Set menu starter + main + dessert: -10%",
     drinks_titre:"Our Drinks",
-    aperitifs:"Aperitifs",
-    aperitifs_items:[["House Kir (15cl)","5.00 €"],["White Martini (7cl)","6.00 €"],["Ricard (3cl)","4.00 €"],["Jameson (5cl)","8.00 €"],["Aperol Spritz","8.00 €"],["Port Wine","6.00 €"]],
-    beers_pression:"Draft Beers",
+    aperitifs:"Spirits &amp; Aperitifs",
+    aperitifs_items:[["House Kir (15cl)","5.00 €"],["White Martini (7cl)","6.00 €"],["Ricard (2cl)","3.50 €"],["Jameson / J&amp;B (4cl)","8.00 €"],["Aperol Spritz <small style=\"color:rgba(255,255,255,0.35);\">HH 8.00 €</small>","10.00 €"],["Port Wine (7cl)","6.00 €"],["Get 27 (5cl)","7.00 €"],["Cognac Hennessy (5cl)","9.50 €"],["Poire William","9.50 €"],["Jack Daniel's (4cl)","9.50 €"]],
+    beers_pression:"Beers", draught:"On Draught", bottles:"Bottled",
+    beer_rows:[["Campus (Blonde)","4.50 €","7.00 €","5.00 €"],["Cadette (IPA)","5.50 €","9.50 €","7.50 €"]],
     demi:"Half Pint (25cl)", demi_price:"4.50 €", pint_label:"Pint (50cl)", pint_price:"7.00 €", pint_hh:"5.00 €",
     wines:"Wines",
     wine_headers:["","Glass","Quarter","Carafe","Bottle"],
     wines_named:[["Chardonnay IGP 2023","Maison Fernand Vallière","White","6.00 €","11.00 €","18.00 €","25.00 €"],["Rosé Gris IGP","Pur Style","Rosé","6.00 €","11.00 €","18.00 €","25.00 €"],["Brouilly AOP 2023","Maison Fernand Vallière","Red","6.00 €","11.00 €","19.00 €","26.00 €"],["Côte du Rhône AOP 2023","Prieurs St Julien","Red","6.50 €","12.00 €","20.00 €","28.00 €"],["Saint Estèphe (75cl)","","Red","–","–","–","42.00 €"]],
     bottled_beers:"Bottled Beers",
-    bottled_items:[["Triple Karmelite Blonde 33cl","8.00 €"],["Vedette IPA 33cl","8.00 €"],["Chimay Dorée 33cl","7.50 €"]],
+    bottled_items:[["Triple Karmelite Blonde (33cl)","8.00 €"],["Vedette IPA (33cl)","8.00 €"],["Chimay Dorée (33cl)","7.50 €"]],
     digestifs:"Digestifs",
     digestifs_items:[["Get 27 (5cl)","7.00 €"],["Cognac Hennessy (5cl)","9.50 €"],["Poire William","9.50 €"]],
     softs:"Soft Drinks",
@@ -475,10 +479,10 @@ const T = {
     juice_title:"Fruit Juices", juice_list:"Apple · Orange · Pineapple (25cl)", juice_price:"5.00 €",
     tea_title:"Organic Teas &amp; Infusions", tea_list:"Earl Grey · Mint · Lemon Tea · Jasmine Green Tea · Verbena · Red Fruits", tea_price:"4.00 €",
     cafe_title:"Coffee", cafe_list:"100% Arabica Espresso", cafe_price:"2.50 €",
-    infos_titre:"Opening Hours &amp; Contact",
+    infos_titre:"Opening Hours & Contact",
     hours_title:"Opening Hours",
     days:["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday"],
-    hours_list:["Closed","12:00 – 2:30pm / 7:00 – 10:30pm","12:00 – 2:30pm / 7:00 – 10:30pm","12:00 – 2:30pm / 7:00 – 10:30pm","12:00 – 2:30pm / 7:00 – 11:00pm","12:00 – 2:30pm / 7:00 – 11:00pm","12:00 – 3:00pm"],
+    hours_list:["Closed","7:00pm · last order 10:30pm","7:00pm · last order 10:30pm","7:00pm · last order 10:30pm","7:00pm · last order 10:30pm","12:00pm · last order 2:30pm<br>7:00pm · last order 10:30pm","12:00pm · last order 2:30pm<br>7:00pm · last order 10:30pm"],
     contact_title:"Contact",
     findus_title:"Find Us",
     metro:"Métro Corvisart (line 6) · Place d'Italie (lines 5, 6, 7)"
@@ -495,7 +499,7 @@ const T = {
     sauceSuppl:"Supplemento Salsa",
     starters_items:[
       ["Uova Mimosa","6,00 €"],
-      ["Crottin de Chavignole Tostato","7,00 €"],
+      ["Crottin de Chavignol Tostato","7,00 €"],
       ["Lumache di Borgogna <small>x6 / x12</small>","6,50 € / 12,00 €"],
       ["Insalata di Ventriglio Confit","7,50 €"],
       ["Terrina ai Due Salmoni","8,00 €"]
@@ -506,7 +510,8 @@ const T = {
       ["Spiedino di Manzo","19,00 €"],
       ["Spiedino d'Agnello","19,00 €"],
       ["L'Entrecôte dello Chef","26,00 €"],
-      ["Gamberi del Chef","28,00 €"]
+      ["Gamberi del Chef","28,00 €"],
+      ["Spiedino Vegetariano <small>(Tofu marinato, zucchina, peperone, melanzana, funghi, cipolla rossa, pomodorino — crema di feta o salsa all'aglio · Allergeni: soia, glutine, latte)</small>","18,00 €"]
     ],
     desserts_items:[
       ["3 Palline di Gelato a Scelta <small>(Cioccolato al Latte · Cioccolato Fondente · Limone Verde · Limone · Fragola · Vaniglia)</small>","6,00 €"],
@@ -519,15 +524,16 @@ const T = {
     footnote:"Tutte le nostre carni sono marinate e tutti i nostri piatti sono fatti in casa",
     mincb:"Menù antipasto + piatto + dolce: -10%",
     drinks_titre:"Le Nostre Bevande",
-    aperitifs:"Aperitivi",
-    aperitifs_items:[["Kir Maison (15cl)","5,00 €"],["Martini Bianco (7cl)","6,00 €"],["Ricard (3cl)","4,00 €"],["Jameson (5cl)","8,00 €"],["Aperol Spritz","8,00 €"],["Porto","6,00 €"]],
-    beers_pression:"Birre alla Spina",
+    aperitifs:"Alcolici",
+    aperitifs_items:[["Kir Maison (15cl)","5,00 €"],["Martini Bianco (7cl)","6,00 €"],["Ricard (2cl)","3,50 €"],["Jameson / J&amp;B (4cl)","8,00 €"],["Apérol Spritz <small style=\"color:rgba(255,255,255,0.35);\">HH 8,00 €</small>","10,00 €"],["Porto (7cl)","6,00 €"],["Get 27 (5cl)","7,00 €"],["Cognac Hennessy (5cl)","9,50 €"],["Poire William","9,50 €"],["Jack Daniel's (4cl)","9,50 €"]],
+    beers_pression:"Birre", draught:"Alla Spina", bottles:"In Bottiglia",
+    beer_rows:[["Campus (Blonde)","4,50 €","7,00 €","5,00 €"],["Cadette (IPA)","5,50 €","9,50 €","7,50 €"]],
     demi:"Bicchiere (25cl)", demi_price:"4,50 €", pint_label:"Pinta (50cl)", pint_price:"7,00 €", pint_hh:"5,00 €",
     wines:"Vini",
     wine_headers:["","Bicchiere","Quarto","Caraffa","Bottiglia"],
     wines_named:[["Chardonnay IGP 2023","Maison Fernand Vallière","Bianco","6,00 €","11,00 €","18,00 €","25,00 €"],["Rosé Gris IGP","Pur Style","Rosato","6,00 €","11,00 €","18,00 €","25,00 €"],["Brouilly AOP 2023","Maison Fernand Vallière","Rosso","6,00 €","11,00 €","19,00 €","26,00 €"],["Côte du Rhône AOP 2023","Prieurs St Julien","Rosso","6,50 €","12,00 €","20,00 €","28,00 €"],["Saint Estèphe (75cl)","","Rosso","–","–","–","42,00 €"]],
     bottled_beers:"Birre in Bottiglia",
-    bottled_items:[["Triple Karmelite Blonde 33cl","8,00 €"],["Vedette IPA 33cl","8,00 €"],["Chimay Dorée 33cl","7,50 €"]],
+    bottled_items:[["Triple Karmelite Blonde (33cl)","8,00 €"],["Vedette IPA (33cl)","8,00 €"],["Chimay Dorée (33cl)","7,50 €"]],
     digestifs:"Digestivi",
     digestifs_items:[["Get 27 (5cl)","7,00 €"],["Cognac Hennessy (5cl)","9,50 €"],["Poire William","9,50 €"]],
     softs:"Analcolici",
@@ -536,10 +542,10 @@ const T = {
     juice_title:"Succhi di Frutta", juice_list:"Mela · Arancia · Ananas (25cl)", juice_price:"5,00 €",
     tea_title:"Tè &amp; Tisane Bio Malongo", tea_list:"Earl Grey · Menta · Tè Limone · Tè Verde Gelsomino · Verbena · Frutti Rossi", tea_price:"4,00 €",
     cafe_title:"Caffè", cafe_list:"Espresso 100% Arabica", cafe_price:"2,50 €",
-    infos_titre:"Orari &amp; Contatti",
+    infos_titre:"Orari & Contatti",
     hours_title:"Orari di Apertura",
     days:["Lunedì","Martedì","Mercoledì","Giovedì","Venerdì","Sabato","Domenica"],
-    hours_list:["Chiuso","12:00 – 14:30 / 19:00 – 22:30","12:00 – 14:30 / 19:00 – 22:30","12:00 – 14:30 / 19:00 – 22:30","12:00 – 14:30 / 19:00 – 23:00","12:00 – 14:30 / 19:00 – 23:00","12:00 – 15:00"],
+    hours_list:["Chiuso","19:00 · ultimo ordine 22:30","19:00 · ultimo ordine 22:30","19:00 · ultimo ordine 22:30","19:00 · ultimo ordine 22:30","12:00 · ultimo ordine 14:30<br>19:00 · ultimo ordine 22:30","12:00 · ultimo ordine 14:30<br>19:00 · ultimo ordine 22:30"],
     contact_title:"Contatti",
     findus_title:"Come Trovarci",
     metro:"Métro Corvisart (linea 6) · Place d'Italie (linee 5, 6, 7)"
@@ -556,7 +562,7 @@ const T = {
     sauceSuppl:"Suplemento Salsa",
     starters_items:[
       ["Huevos Mimosa","6,00 €"],
-      ["Crottin de Chavignole Tostado","7,00 €"],
+      ["Crottin de Chavignol Tostado","7,00 €"],
       ["Caracoles de Borgoña <small>x6 / x12</small>","6,50 € / 12,00 €"],
       ["Ensalada de Mollejas Confitadas","7,50 €"],
       ["Terrina de Dos Salmones","8,00 €"]
@@ -567,7 +573,8 @@ const T = {
       ["Brocheta de Ternera","19,00 €"],
       ["Brocheta de Cordero","19,00 €"],
       ["El Entrecot del Chef","26,00 €"],
-      ["Gambas del Chef","28,00 €"]
+      ["Gambas del Chef","28,00 €"],
+      ["Brocheta Vegetariana <small>(Tofu marinado, calabacín, pimiento, berenjena, champiñones, cebolla roja, tomate cherry — crema de feta o salsa de ajo · Alérgenos: soja, gluten, leche)</small>","18,00 €"]
     ],
     desserts_items:[
       ["3 Bolas de Helado a Elegir <small>(Choco. con Leche · Choco. Negro · Lima · Limón · Fresa · Vainilla)</small>","6,00 €"],
@@ -580,15 +587,16 @@ const T = {
     footnote:"Todas nuestras carnes están marinadas y todos nuestros platos son caseros",
     mincb:"Menú entrante + plato + postre: -10%",
     drinks_titre:"Nuestras Bebidas",
-    aperitifs:"Aperitivos",
-    aperitifs_items:[["Kir Maison (15cl)","5,00 €"],["Martini Blanco (7cl)","6,00 €"],["Ricard (3cl)","4,00 €"],["Jameson (5cl)","8,00 €"],["Aperol Spritz","8,00 €"],["Porto","6,00 €"]],
-    beers_pression:"Cervezas de Grifo",
+    aperitifs:"Alcoholes",
+    aperitifs_items:[["Kir Maison (15cl)","5,00 €"],["Martini Blanco (7cl)","6,00 €"],["Ricard (2cl)","3,50 €"],["Jameson / J&amp;B (4cl)","8,00 €"],["Apérol Spritz <small style=\"color:rgba(255,255,255,0.35);\">HH 8,00 €</small>","10,00 €"],["Porto (7cl)","6,00 €"],["Get 27 (5cl)","7,00 €"],["Cognac Hennessy (5cl)","9,50 €"],["Poire William","9,50 €"],["Jack Daniel's (4cl)","9,50 €"]],
+    beers_pression:"Cervezas", draught:"De Grifo", bottles:"En Botella",
+    beer_rows:[["Campus (Blonde)","4,50 €","7,00 €","5,00 €"],["Cadette (IPA)","5,50 €","9,50 €","7,50 €"]],
     demi:"Caña (25cl)", demi_price:"4,50 €", pint_label:"Pinta (50cl)", pint_price:"7,00 €", pint_hh:"5,00 €",
     wines:"Vinos",
     wine_headers:["","Copa","Cuarto","Jarra","Botella"],
     wines_named:[["Chardonnay IGP 2023","Maison Fernand Vallière","Blanco","6,00 €","11,00 €","18,00 €","25,00 €"],["Rosé Gris IGP","Pur Style","Rosado","6,00 €","11,00 €","18,00 €","25,00 €"],["Brouilly AOP 2023","Maison Fernand Vallière","Tinto","6,00 €","11,00 €","19,00 €","26,00 €"],["Côte du Rhône AOP 2023","Prieurs St Julien","Tinto","6,50 €","12,00 €","20,00 €","28,00 €"],["Saint Estèphe (75cl)","","Tinto","–","–","–","42,00 €"]],
     bottled_beers:"Cervezas en Botella",
-    bottled_items:[["Triple Karmelite Blonde 33cl","8,00 €"],["Vedette IPA 33cl","8,00 €"],["Chimay Dorée 33cl","7,50 €"]],
+    bottled_items:[["Triple Karmelite Blonde (33cl)","8,00 €"],["Vedette IPA (33cl)","8,00 €"],["Chimay Dorée (33cl)","7,50 €"]],
     digestifs:"Digestivos",
     digestifs_items:[["Get 27 (5cl)","7,00 €"],["Cognac Hennessy (5cl)","9,50 €"],["Poire William","9,50 €"]],
     softs:"Refrescos",
@@ -597,10 +605,10 @@ const T = {
     juice_title:"Zumos de Frutas", juice_list:"Manzana · Naranja · Piña (25cl)", juice_price:"5,00 €",
     tea_title:"Tés &amp; Infusiones Bio Malongo", tea_list:"Earl Grey · Menta · Té Limón · Té Verde Jazmín · Verbena · Frutos Rojos", tea_price:"4,00 €",
     cafe_title:"Café", cafe_list:"Espresso 100% Arabica", cafe_price:"2,50 €",
-    infos_titre:"Horarios &amp; Contacto",
+    infos_titre:"Horarios & Contacto",
     hours_title:"Horarios de Apertura",
     days:["Lunes","Martes","Miércoles","Jueves","Viernes","Sábado","Domingo"],
-    hours_list:["Cerrado","12:00 – 14:30 / 19:00 – 22:30","12:00 – 14:30 / 19:00 – 22:30","12:00 – 14:30 / 19:00 – 22:30","12:00 – 14:30 / 19:00 – 23:00","12:00 – 14:30 / 19:00 – 23:00","12:00 – 15:00"],
+    hours_list:["Cerrado","19:00 · última comanda 22:30","19:00 · última comanda 22:30","19:00 · última comanda 22:30","19:00 · última comanda 22:30","12:00 · última comanda 14:30<br>19:00 · última comanda 22:30","12:00 · última comanda 14:30<br>19:00 · última comanda 22:30"],
     contact_title:"Contacto",
     findus_title:"Cómo Llegar",
     metro:"Métro Corvisart (línea 6) · Place d'Italie (líneas 5, 6, 7)"
@@ -669,16 +677,16 @@ function renderBoissons(lang) {
         </div>
         <div class="bois-bloc">
           <div class="bois-categorie">${t.beers_pression}</div>
-          <div class="bois-item"><span class="bois-nom">${t.demi}</span><span class="bois-prix">${t.demi_price}</span></div>
-          <div class="bois-item"><span class="bois-nom">${t.pint_label} <small style="color:rgba(255,255,255,0.35);">HH ${t.pint_hh}</small></span><span class="bois-prix">${t.pint_price}</span></div>
-        </div>
-        <div class="bois-bloc">
-          <div class="bois-categorie">${t.bottled_beers}</div>
-          ${bi(t.bottled_items)}
-        </div>
-        <div class="bois-bloc">
-          <div class="bois-categorie">${t.digestifs}</div>
-          ${bi(t.digestifs_items)}
+          <div class="bois-softs-group">
+            <div class="bois-softs-title">${t.draught}</div>
+            ${t.beer_rows.map(([n,d,p,h]) => `<div class="bois-item"><span class="bois-nom"><strong>${n}</strong></span><span class="bois-prix"></span></div>
+            <div class="bois-item"><span class="bois-nom">${t.demi}</span><span class="bois-prix">${d}</span></div>
+            <div class="bois-item"><span class="bois-nom">${t.pint_label} <small style="color:rgba(255,255,255,0.35);">HH ${h}</small></span><span class="bois-prix">${p}</span></div>`).join('')}
+          </div>
+          <div class="bois-softs-group">
+            <div class="bois-softs-title">${t.bottles}</div>
+            ${bi(t.bottled_items)}
+          </div>
         </div>
       </div>
       <div>
@@ -748,4 +756,16 @@ function setLang(lang) {
   renderMenu(lang);
   renderBoissons(lang);
   renderInfos(lang);
-  document.queryS
+  document.querySelectorAll('[data-i18n]').forEach(el => {
+    const key = el.getAttribute('data-i18n');
+    if (T[lang][key] !== undefined) el.textContent = T[lang][key];
+  });
+}
+
+renderMenu('fr');
+renderBoissons('fr');
+renderInfos('fr');
+</script>
+
+</body>
+</html>
