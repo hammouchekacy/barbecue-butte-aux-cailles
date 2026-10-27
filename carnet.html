@@ -54,6 +54,7 @@
   .num { width:26px; height:26px; line-height:26px; border-radius:50%; background:#f1f3f5; font-size:.78rem; font-weight:700; display:inline-block; }
   .coche { width:36px; height:36px; border-radius:9px; border:1.5px solid #d5d9e0; background:#fafbfc; color:#b0b7c3; font-size:1.05rem; cursor:pointer; }
   tr.ok .coche { background:var(--vert); border-color:var(--vert); color:#fff; }
+  input.erreur { border-color:var(--rouge); background:#fdeeec; }
   .notes { margin-top:8px; font-size:.85rem; padding:7px 9px; }
 
   /* repos */
@@ -282,7 +283,18 @@ function majSet(xi, si, k, v) { DB.actif.exos[xi].sets[si][k] = v; sauver(); }
 function cocher(xi, si) {
   const s = DB.actif.exos[xi].sets[si];
   const p = precedent(DB.actif.exos[xi].id)[si];
-  if (!s.ok) { if (s.kg === "" && p) s.kg = p.kg; if (s.reps === "" && p) s.reps = p.reps; }
+  if (!s.ok) {
+    if (s.kg === "" && p) s.kg = p.kg; if (s.reps === "" && p) s.reps = p.reps;
+    const x = exo(DB.actif.exos[xi].id), sansCharge = x.t || ["Poids du corps","Banc","Cardio"].includes(x.materiel);
+    const manque = nb(s.reps) <= 0 ? "reps" : (!sansCharge && s.kg === "" ? "kg" : "");
+    if (manque) {
+      sauver(); rendre();
+      const champ = document.querySelectorAll(".card")[xi + 0].querySelectorAll("table.sets tr")[si + 1].querySelectorAll("input")[manque === "kg" ? 0 : 1];
+      champ.classList.add("erreur"); champ.focus();
+      alert(manque === "kg" ? "Indique la charge (kg) avant de valider la série." : "Indique " + (x.t ? "la durée (secondes)" : "le nombre de répétitions") + " avant de valider la série.");
+      return;
+    }
+  }
   s.ok = !s.ok; sauver(); rendre();
   if (s.ok && DB.prefs.repos) reposStart(DB.prefs.repos);
 }
