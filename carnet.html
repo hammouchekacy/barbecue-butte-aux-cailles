@@ -1,0 +1,583 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<meta name="robots" content="noindex, nofollow">
+<meta name="theme-color" content="#1a7f4e">
+<title>Carnet de salle</title>
+<style>
+  * { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+  :root { --vert:#1a7f4e; --vert-f:#146540; --vert-c:#e2f3ea; --fond:#f4f2ec; --txt:#20242b; --gris:#5a6a80; --bord:#e3e6ea; --rouge:#c0392b; --or:#d99a1b; }
+  html, body { height:100%; }
+  body { font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif; background:var(--fond); color:var(--txt); display:flex; flex-direction:column; }
+  header { background:var(--vert); color:#fff; padding:12px 16px; display:flex; align-items:center; justify-content:space-between; box-shadow:0 2px 8px rgba(0,0,0,.18); }
+  header h1 { font-size:1.05rem; font-weight:600; }
+  header .hd-btn { background:rgba(255,255,255,.18); color:#fff; border:none; border-radius:9px; padding:6px 11px; font-size:.8rem; cursor:pointer; }
+  main { flex:1; overflow-y:auto; width:100%; max-width:480px; margin:0 auto; padding:16px 14px 150px; }
+  nav { position:fixed; bottom:0; left:0; right:0; background:#fff; border-top:1px solid var(--bord); display:flex; z-index:20; padding-bottom:env(safe-area-inset-bottom); }
+  nav button { flex:1; border:none; background:none; padding:9px 0 8px; font-size:.68rem; color:var(--gris); cursor:pointer; display:flex; flex-direction:column; align-items:center; gap:2px; }
+  nav button span { font-size:1.25rem; }
+  nav button.on { color:var(--vert); font-weight:700; }
+
+  .card { background:#fff; border-radius:14px; padding:16px; box-shadow:0 1px 4px rgba(0,0,0,.08); margin-bottom:12px; }
+  .titre { font-size:1rem; font-weight:600; color:var(--vert); margin-bottom:4px; }
+  .sub { font-size:.8rem; color:var(--gris); }
+  h2 { font-size:.95rem; margin:6px 2px 10px; color:var(--gris); text-transform:uppercase; letter-spacing:.5px; }
+  .btn { border:none; border-radius:11px; padding:12px 14px; font-size:.92rem; font-weight:600; cursor:pointer; background:var(--vert); color:#fff; }
+  .btn.sec { background:#e8eaee; color:var(--txt); }
+  .btn.danger { background:#fbe6e3; color:var(--rouge); }
+  .btn.sm { padding:7px 11px; font-size:.8rem; border-radius:9px; }
+  .btn.full { width:100%; }
+  .row { display:flex; gap:8px; align-items:center; }
+  .row > * { flex:1; }
+  .gap { margin-top:10px; }
+  .hidden { display:none !important; }
+  input, select, textarea { font:inherit; font-size:.95rem; padding:9px 10px; border:1.5px solid var(--bord); border-radius:9px; background:#fafbfc; width:100%; color:var(--txt); }
+  input:focus, select:focus, textarea:focus { outline:none; border-color:var(--vert); }
+  .vide { color:#8a94a3; font-size:.9rem; text-align:center; padding:14px 0; }
+  .tag { display:inline-block; font-size:.7rem; font-weight:600; padding:2px 8px; border-radius:20px; background:var(--vert-c); color:var(--vert-f); }
+  .tag.or { background:#fdf1dc; color:#8a5f10; }
+
+  /* séance */
+  .chrono { position:sticky; top:-16px; z-index:5; background:var(--vert-f); color:#fff; border-radius:12px; padding:10px 14px; margin-bottom:12px; display:flex; justify-content:space-between; align-items:center; }
+  .chrono b { font-size:1.15rem; font-variant-numeric:tabular-nums; }
+  .exo-tete { display:flex; justify-content:space-between; align-items:flex-start; gap:8px; margin-bottom:8px; }
+  .exo-nom { font-weight:600; font-size:1rem; }
+  .icones button { background:#f1f3f5; border:none; border-radius:8px; width:32px; height:32px; font-size:.95rem; cursor:pointer; margin-left:4px; }
+  table.sets { width:100%; border-collapse:collapse; }
+  table.sets th { font-size:.68rem; color:var(--gris); font-weight:600; text-transform:uppercase; padding:2px 3px; }
+  table.sets td { padding:3px; text-align:center; }
+  table.sets td input { text-align:center; padding:8px 2px; }
+  table.sets .prec { font-size:.78rem; color:var(--gris); white-space:nowrap; }
+  table.sets tr.ok td input { background:var(--vert-c); border-color:#bfe3cf; }
+  .num { width:26px; height:26px; line-height:26px; border-radius:50%; background:#f1f3f5; font-size:.78rem; font-weight:700; display:inline-block; }
+  .coche { width:36px; height:36px; border-radius:9px; border:1.5px solid #d5d9e0; background:#fafbfc; color:#b0b7c3; font-size:1.05rem; cursor:pointer; }
+  tr.ok .coche { background:var(--vert); border-color:var(--vert); color:#fff; }
+  input.erreur { border-color:var(--rouge); background:#fdeeec; }
+  .notes { margin-top:8px; font-size:.85rem; padding:7px 9px; }
+
+  /* repos */
+  #repos { position:fixed; left:12px; right:12px; bottom:68px; max-width:456px; margin:0 auto; background:#20242b; color:#fff; border-radius:14px; padding:10px 14px; display:flex; align-items:center; gap:10px; z-index:25; box-shadow:0 4px 16px rgba(0,0,0,.3); }
+  #repos b { font-size:1.3rem; font-variant-numeric:tabular-nums; min-width:62px; }
+  #repos .bar { flex:1; height:6px; background:#46506a; border-radius:4px; overflow:hidden; }
+  #repos .bar div { height:100%; background:#4cd08a; width:100%; }
+  #repos button { background:#46506a; color:#fff; border:none; border-radius:8px; padding:6px 10px; font-size:.8rem; cursor:pointer; }
+
+  /* feuille modale */
+  #voile { position:fixed; inset:0; background:rgba(0,0,0,.5); z-index:40; display:flex; align-items:flex-end; justify-content:center; }
+  #feuille { background:#fff; width:100%; max-width:480px; max-height:88vh; overflow-y:auto; border-radius:18px 18px 0 0; padding:18px 16px 26px; }
+  #feuille h3 { color:var(--vert); margin-bottom:12px; font-size:1.05rem; }
+  .liste-exo { max-height:46vh; overflow-y:auto; margin:10px 0; border:1px solid var(--bord); border-radius:10px; }
+  .liste-exo div { padding:10px 12px; border-bottom:1px solid #eef0f3; display:flex; justify-content:space-between; align-items:center; cursor:pointer; font-size:.92rem; }
+  .liste-exo div:last-child { border-bottom:none; }
+  .liste-exo div.sel { background:var(--vert-c); }
+  .chips { display:flex; gap:6px; overflow-x:auto; padding-bottom:6px; }
+  .chips button { flex:none; border:1.5px solid var(--bord); background:#fff; border-radius:20px; padding:5px 12px; font-size:.78rem; cursor:pointer; }
+  .chips button.on { background:var(--vert); color:#fff; border-color:var(--vert); }
+
+  /* historique / stats */
+  .ligne { display:flex; justify-content:space-between; align-items:center; padding:9px 2px; border-bottom:1px solid #eef0f3; font-size:.9rem; gap:8px; }
+  .ligne:last-child { border-bottom:none; }
+  .stats { display:grid; grid-template-columns:repeat(3,1fr); gap:8px; margin-bottom:12px; }
+  .stat { background:#fff; border-radius:12px; padding:12px 6px; text-align:center; box-shadow:0 1px 4px rgba(0,0,0,.08); }
+  .stat b { display:block; font-size:1.25rem; color:var(--vert); }
+  .stat span { font-size:.7rem; color:var(--gris); }
+  canvas { width:100%; height:190px; display:block; }
+  .semaine { display:flex; gap:6px; justify-content:space-between; margin-top:6px; }
+  .semaine div { flex:1; text-align:center; font-size:.68rem; color:var(--gris); }
+  .semaine i { display:block; margin:3px auto 0; width:22px; height:22px; border-radius:50%; background:#e8eaee; }
+  .semaine i.on { background:var(--vert); }
+
+  /* médias */
+  .galerie { display:grid; grid-template-columns:repeat(3,1fr); gap:6px; }
+  .galerie .m { position:relative; aspect-ratio:3/4; border-radius:9px; overflow:hidden; background:#000; }
+  .galerie img, .galerie video { width:100%; height:100%; object-fit:cover; display:block; }
+  .galerie .d { position:absolute; left:0; right:0; bottom:0; background:rgba(0,0,0,.55); color:#fff; font-size:.65rem; padding:2px 5px; }
+  .galerie .x { position:absolute; top:3px; right:3px; background:rgba(0,0,0,.6); color:#fff; border:none; border-radius:50%; width:22px; height:22px; font-size:.75rem; cursor:pointer; }
+  .compare { display:grid; grid-template-columns:1fr 1fr; gap:6px; margin-top:10px; }
+  .compare img { width:100%; border-radius:9px; }
+  .compare p { text-align:center; font-size:.75rem; color:var(--gris); margin-top:2px; }
+  .plein { width:100%; border-radius:10px; background:#000; max-height:55vh; }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>🏋️ Carnet de salle</h1>
+  <button class="hd-btn" onclick="menuDonnees()">Données</button>
+</header>
+<main id="vue"></main>
+
+<div id="repos" class="hidden">
+  <span>⏱</span><b id="reposT">1:30</b>
+  <div class="bar"><div id="reposB"></div></div>
+  <button onclick="reposAjout(-15)">−15</button><button onclick="reposAjout(15)">+15</button><button onclick="reposStop()">✕</button>
+</div>
+
+<nav id="onglets"></nav>
+<div id="voile" class="hidden" onclick="if(event.target===this)fermer()"><div id="feuille"></div></div>
+
+<script>
+/* ============ BIBLIOTHÈQUE D'EXERCICES ============ */
+const MUSCLES = ["Pectoraux","Dos","Épaules","Biceps","Triceps","Jambes","Abdos","Cardio"];
+// t:1 = exercice chronométré (la colonne "reps" devient des secondes)
+const BIBLIO = [
+  ["pompes-inclinees","Pompes inclinées","Pectoraux","Banc"],["dips","Dips sur banc","Triceps","Banc"],
+  ["step-ups","Step-ups","Jambes","Banc"],["squats-bulgares","Squats bulgares","Jambes","Banc"],
+  ["gainage","Gainage pieds surélevés","Abdos","Banc",1],["crunchs","Crunchs sur banc","Abdos","Banc"],
+  ["ecartes-poulie","Écartés à la poulie","Pectoraux","Poulie réglable"],["face-pull","Tirage visage (face pull)","Épaules","Poulie réglable"],
+  ["extension-triceps","Extensions triceps à la corde","Triceps","Poulie réglable"],["curl-biceps","Curl biceps à la poulie","Biceps","Poulie réglable"],
+  ["elevations-lat","Élévations latérales","Épaules","Poulie réglable"],["pallof-press","Pallof press","Abdos","Poulie réglable"],
+  ["tirage-vertical","Tirage vertical","Dos","Poulie tirage"],["tirage-poitrine","Tirage poitrine prise serrée","Dos","Poulie tirage"],
+  ["tirage-horizontal","Tirage horizontal (rowing)","Dos","Poulie tirage"],
+  ["dc-barre","Développé couché barre","Pectoraux","Barre"],["dc-halteres","Développé couché haltères","Pectoraux","Haltères"],
+  ["dc-incline","Développé incliné haltères","Pectoraux","Haltères"],["pompes","Pompes","Pectoraux","Poids du corps"],
+  ["tractions","Tractions","Dos","Poids du corps"],["rowing-barre","Rowing barre","Dos","Barre"],
+  ["rowing-haltere","Rowing un bras haltère","Dos","Haltères"],["souleve-de-terre","Soulevé de terre","Dos","Barre"],
+  ["dev-militaire","Développé militaire","Épaules","Barre"],["dev-halteres-epaules","Développé épaules haltères","Épaules","Haltères"],
+  ["oiseau","Oiseau haltères","Épaules","Haltères"],["curl-barre","Curl barre","Biceps","Barre"],
+  ["curl-marteau","Curl marteau","Biceps","Haltères"],["barre-front","Barre au front","Triceps","Barre"],
+  ["squat","Squat barre","Jambes","Barre"],["presse","Presse à cuisses","Jambes","Machine"],
+  ["fentes","Fentes haltères","Jambes","Haltères"],["leg-curl","Leg curl","Jambes","Machine"],
+  ["leg-extension","Leg extension","Jambes","Machine"],["hip-thrust","Hip thrust","Jambes","Barre"],
+  ["mollets","Mollets debout","Jambes","Machine"],["releves-jambes","Relevés de jambes","Abdos","Poids du corps"],
+  ["planche","Planche","Abdos","Poids du corps",1],["roue-abdos","Roue abdominale","Abdos","Roue"],
+  ["course","Course à pied","Cardio","Cardio",1],["velo","Vélo","Cardio","Cardio",1],["rameur","Rameur","Cardio","Cardio",1]
+].map(([id,nom,muscle,materiel,t]) => ({id,nom,muscle,materiel,t:!!t}));
+
+const ROUTINES_DEFAUT = [
+  {id:"r-banc",nom:"Banc",exos:["pompes-inclinees","dips","step-ups","squats-bulgares","gainage","crunchs"]},
+  {id:"r-poulie",nom:"Poulie réglable",exos:["ecartes-poulie","face-pull","extension-triceps","curl-biceps","elevations-lat","pallof-press"]},
+  {id:"r-tirage",nom:"Poulie tirage",exos:["tirage-vertical","tirage-poitrine","tirage-horizontal"]}
+];
+
+/* ============ ÉTAT ============ */
+const $ = id => document.getElementById(id);
+const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const LS = "carnet_v1";
+let DB = (() => {
+  try { const d = JSON.parse(localStorage.getItem(LS)); if (d) return d; } catch (e) {}
+  return {routines:ROUTINES_DEFAUT, hist:[], custom:[], corps:[], prefs:{repos:90}, actif:null};
+})();
+const sauver = () => localStorage.setItem(LS, JSON.stringify(DB));
+const exos = () => BIBLIO.concat(DB.custom);
+const exo = id => exos().find(e => e.id === id) || {id, nom:id, muscle:"", materiel:"", t:false};
+const uid = () => Date.now().toString(36) + Math.random().toString(36).slice(2, 6);
+const jourStr = ts => new Date(ts).toLocaleDateString("fr-FR", {weekday:"short", day:"numeric", month:"short"});
+const fmtDuree = s => { s = Math.max(0, Math.round(s)); const h = Math.floor(s/3600), m = Math.floor(s%3600/60); return (h ? h + "h" : "") + String(m).padStart(h?2:1,"0") + (h ? "" : " min"); };
+const e1rm = (kg, r) => r > 0 ? kg * (1 + r/30) : 0;
+const nb = v => parseFloat(String(v).replace(",", ".")) || 0;
+let onglet = "seance";
+
+/* ============ MÉDIAS (IndexedDB : photos et vidéos) ============ */
+const idb = new Promise((ok, ko) => {
+  const r = indexedDB.open("carnet-medias", 1);
+  r.onupgradeneeded = () => r.result.createObjectStore("m", {keyPath:"id"});
+  r.onsuccess = () => ok(r.result); r.onerror = () => ko(r.error);
+});
+const tx = async (mode, fn) => { const d = await idb; return new Promise((ok, ko) => { const t = d.transaction("m", mode); const req = fn(t.objectStore("m")); t.oncomplete = () => ok(req && req.result); t.onerror = () => ko(t.error); }); };
+const mediaAdd = m => tx("readwrite", s => s.put(m));
+const mediaDel = id => tx("readwrite", s => s.delete(id));
+const mediaAll = () => tx("readonly", s => s.getAll()).then(a => a || []);
+
+function reduirePhoto(file, max = 1280) {
+  return new Promise(ok => {
+    const img = new Image(), u = URL.createObjectURL(file);
+    img.onload = () => {
+      const k = Math.min(1, max / Math.max(img.width, img.height));
+      const c = document.createElement("canvas"); c.width = img.width * k; c.height = img.height * k;
+      c.getContext("2d").drawImage(img, 0, 0, c.width, c.height);
+      URL.revokeObjectURL(u); c.toBlob(b => ok(b), "image/jpeg", .85);
+    };
+    img.onerror = () => ok(file); img.src = u;
+  });
+}
+async function ajouterMedia(input, kind, ref) {
+  for (const f of input.files) {
+    const isVid = f.type.startsWith("video");
+    const blob = isVid ? f : await reduirePhoto(f);
+    await mediaAdd({id:uid(), type:isVid ? "video" : "photo", kind, ref, date:Date.now(), blob});
+  }
+  input.value = "";
+  if (kind === "corps") rendre(); else ouvrirMedias(ref);
+}
+
+/* ============ NAVIGATION ============ */
+const ONGLETS = [["seance","🏋️","Séance"],["histo","📅","Historique"],["progres","📈","Progrès"],["corps","📸","Corps"],["exos","📚","Exercices"]];
+function rendreOnglets() {
+  $("onglets").innerHTML = ONGLETS.map(([k,i,l]) => `<button class="${k===onglet?'on':''}" onclick="aller('${k}')"><span>${i}</span>${l}</button>`).join("");
+}
+function aller(k) { onglet = k; rendre(); $("vue").scrollTop = 0; }
+function rendre() {
+  rendreOnglets();
+  ({seance:vueSeance, histo:vueHisto, progres:vueProgres, corps:vueCorps, exos:vueExos})[onglet]();
+}
+function ouvrir(html) { $("feuille").innerHTML = html; $("voile").classList.remove("hidden"); }
+function fermer() { $("voile").classList.add("hidden"); $("feuille").innerHTML = ""; }
+
+/* ============ SÉANCE ============ */
+function precedent(id) {
+  for (let i = DB.hist.length - 1; i >= 0; i--) {
+    const e = DB.hist[i].exos.find(x => x.id === id);
+    if (e) { const s = e.sets.filter(x => x.ok); if (s.length) return s; }
+  }
+  return [];
+}
+function demarrer(routineId) {
+  const r = DB.routines.find(x => x.id === routineId);
+  DB.actif = {debut:Date.now(), nom:r ? r.nom : "Séance libre", exos:(r ? r.exos : []).map(nouvelExo)};
+  sauver(); rendre();
+}
+function nouvelExo(id) {
+  const p = precedent(id), n = Math.max(3, p.length);
+  return {id, notes:"", sets:Array.from({length:n}, (_, i) => ({kg:p[i] ? p[i].kg : "", reps:p[i] ? p[i].reps : "", ok:false}))};
+}
+function vueSeance() {
+  const a = DB.actif;
+  if (!a) {
+    const sem = semaineStats();
+    $("vue").innerHTML = `
+      <div class="stats">
+        <div class="stat"><b>${sem.n}</b><span>séances (7 j)</span></div>
+        <div class="stat"><b>${Math.round(sem.vol/1000*10)/10} t</b><span>volume (7 j)</span></div>
+        <div class="stat"><b>${DB.hist.length}</b><span>séances en tout</span></div>
+      </div>
+      <h2>Démarrer</h2>
+      <button class="btn full" onclick="demarrer()">+ Séance vide</button>
+      <h2 style="margin-top:18px">Mes routines</h2>
+      ${DB.routines.map(r => `<div class="card"><div class="exo-tete"><div><div class="titre">${esc(r.nom)}</div>
+        <div class="sub">${r.exos.map(i => esc(exo(i).nom)).join(" · ")}</div></div>
+        <div class="icones"><button onclick="editerRoutine('${r.id}')">✏️</button></div></div>
+        <button class="btn full" onclick="demarrer('${r.id}')">Démarrer</button></div>`).join("") || '<div class="vide">Aucune routine.</div>'}
+      <button class="btn sec full" onclick="editerRoutine()">+ Nouvelle routine</button>`;
+    return;
+  }
+  const tot = a.exos.reduce((s, e) => s + e.sets.length, 0), ok = a.exos.reduce((s, e) => s + e.sets.filter(x => x.ok).length, 0);
+  $("vue").innerHTML = `
+    <div class="chrono"><div><div style="font-size:.75rem;opacity:.8">${esc(a.nom)}</div><b id="chronoT">0:00</b></div>
+      <div style="text-align:right;font-size:.8rem">${ok}/${tot} séries<br>${Math.round(volume(a.exos)).toLocaleString("fr-FR")} kg</div></div>
+    ${a.exos.map((e, xi) => carteExo(e, xi)).join("") || '<div class="vide">Ajoute un premier exercice.</div>'}
+    <button class="btn sec full" onclick="choisirExos()">+ Ajouter un exercice</button>
+    <div class="row gap"><button class="btn danger" onclick="abandonner()">Abandonner</button><button class="btn" onclick="terminer()">Terminer ✓</button></div>`;
+  tickChrono();
+}
+function carteExo(e, xi) {
+  const x = exo(e.id), p = precedent(e.id), u = x.t ? "sec" : "reps";
+  return `<div class="card">
+    <div class="exo-tete"><div><div class="exo-nom">${esc(x.nom)}</div><div class="sub">${esc(x.muscle)} · ${esc(x.materiel)}</div></div>
+      <div class="icones"><button title="Démo vidéo" onclick="ouvrirMedias('${e.id}')">🎬</button><button title="Retirer" onclick="retirerExo(${xi})">🗑</button></div></div>
+    <table class="sets"><tr><th>Série</th><th>Précédent</th><th>kg</th><th>${u}</th><th></th></tr>
+    ${e.sets.map((s, si) => `<tr class="${s.ok?'ok':''}"><td><span class="num">${si+1}</span></td>
+      <td class="prec">${p[si] ? p[si].kg + " × " + p[si].reps : "–"}</td>
+      <td><input inputmode="decimal" value="${esc(s.kg)}" placeholder="${p[si]?p[si].kg:''}" onchange="majSet(${xi},${si},'kg',this.value)"></td>
+      <td><input inputmode="numeric" value="${esc(s.reps)}" placeholder="${p[si]?p[si].reps:''}" onchange="majSet(${xi},${si},'reps',this.value)"></td>
+      <td><button class="coche" onclick="cocher(${xi},${si})">✓</button></td></tr>`).join("")}</table>
+    <div class="row gap"><button class="btn sec sm" onclick="ajoutSet(${xi})">+ Série</button>
+      <button class="btn sec sm" onclick="calcDisques(${xi})">🧮 Disques</button></div>
+    <input class="notes" placeholder="Notes (réglage, ressenti…)" value="${esc(e.notes)}" onchange="DB.actif.exos[${xi}].notes=this.value;sauver()">
+  </div>`;
+}
+const volume = list => list.reduce((s, e) => s + (exo(e.id).t ? 0 : e.sets.filter(x => x.ok).reduce((t, x) => t + nb(x.kg) * nb(x.reps), 0)), 0);
+function majSet(xi, si, k, v) { DB.actif.exos[xi].sets[si][k] = v; sauver(); }
+function cocher(xi, si) {
+  const s = DB.actif.exos[xi].sets[si];
+  const p = precedent(DB.actif.exos[xi].id)[si];
+  if (!s.ok) {
+    if (s.kg === "" && p) s.kg = p.kg; if (s.reps === "" && p) s.reps = p.reps;
+    const x = exo(DB.actif.exos[xi].id), sansCharge = x.t || ["Poids du corps","Banc","Cardio"].includes(x.materiel);
+    const manque = nb(s.reps) <= 0 ? "reps" : (!sansCharge && s.kg === "" ? "kg" : "");
+    if (manque) {
+      sauver(); rendre();
+      const champ = document.querySelectorAll(".card")[xi + 0].querySelectorAll("table.sets tr")[si + 1].querySelectorAll("input")[manque === "kg" ? 0 : 1];
+      champ.classList.add("erreur"); champ.focus();
+      alert(manque === "kg" ? "Indique la charge (kg) avant de valider la série." : "Indique " + (x.t ? "la durée (secondes)" : "le nombre de répétitions") + " avant de valider la série.");
+      return;
+    }
+  }
+  s.ok = !s.ok; sauver(); rendre();
+  if (s.ok && DB.prefs.repos) reposStart(DB.prefs.repos);
+}
+function ajoutSet(xi) { const e = DB.actif.exos[xi], d = e.sets[e.sets.length-1] || {}; e.sets.push({kg:d.kg ?? "", reps:d.reps ?? "", ok:false}); sauver(); rendre(); }
+function retirerExo(xi) { if (!confirm("Retirer cet exercice de la séance ?")) return; DB.actif.exos.splice(xi, 1); sauver(); rendre(); }
+function abandonner() { if (!confirm("Abandonner la séance en cours ?")) return; DB.actif = null; reposStop(); sauver(); rendre(); }
+function semaineStats() {
+  const lim = Date.now() - 7*864e5, l = DB.hist.filter(h => h.fin >= lim);
+  return {n:l.length, vol:l.reduce((s, h) => s + volume(h.exos), 0)};
+}
+function terminer() {
+  const a = DB.actif;
+  a.exos.forEach(e => e.sets = e.sets.filter(s => s.ok));
+  a.exos = a.exos.filter(e => e.sets.length);
+  if (!a.exos.length) { alert("Coche au moins une série pour enregistrer la séance."); return; }
+  const prs = [];
+  a.exos.forEach(e => {
+    if (exo(e.id).t) return;
+    const anc = DB.hist.flatMap(h => h.exos.filter(x => x.id === e.id).flatMap(x => x.sets));
+    const mKg = Math.max(0, ...anc.map(s => nb(s.kg))), mRm = Math.max(0, ...anc.map(s => e1rm(nb(s.kg), nb(s.reps))));
+    const nKg = Math.max(...e.sets.map(s => nb(s.kg))), nRm = Math.max(...e.sets.map(s => e1rm(nb(s.kg), nb(s.reps))));
+    if (anc.length && (nKg > mKg || nRm > mRm)) prs.push(`${exo(e.id).nom} : ${nKg > mKg ? nKg + " kg (record de charge)" : "1RM estimé " + Math.round(nRm) + " kg"}`);
+  });
+  const h = {id:uid(), nom:a.nom, debut:a.debut, fin:Date.now(), exos:a.exos};
+  DB.hist.push(h); DB.actif = null; sauver(); reposStop();
+  ouvrir(`<h3>🎉 Séance terminée</h3>
+    <div class="stats"><div class="stat"><b>${fmtDuree((h.fin-h.debut)/1000)}</b><span>durée</span></div>
+    <div class="stat"><b>${Math.round(volume(h.exos)).toLocaleString("fr-FR")}</b><span>kg soulevés</span></div>
+    <div class="stat"><b>${h.exos.reduce((s,e)=>s+e.sets.length,0)}</b><span>séries</span></div></div>
+    ${prs.length ? `<div class="card" style="background:#fdf1dc"><div class="titre" style="color:#8a5f10">🏆 Nouveaux records</div>${prs.map(p => `<div class="ligne">${esc(p)}</div>`).join("")}</div>` : ""}
+    <button class="btn full" onclick="fermer();aller('histo')">Voir l'historique</button>`);
+  rendre();
+}
+
+/* chrono + repos */
+let reposFin = 0, reposTotal = 0;
+setInterval(() => { tickChrono(); tickRepos(); }, 250);
+function tickChrono() { const el = $("chronoT"); if (el && DB.actif) { const s = (Date.now() - DB.actif.debut) / 1000; el.textContent = Math.floor(s/60) + ":" + String(Math.floor(s%60)).padStart(2, "0"); } }
+function reposStart(s) { reposTotal = s; reposFin = Date.now() + s*1000; $("repos").classList.remove("hidden"); }
+function reposAjout(d) { reposFin += d*1000; reposTotal = Math.max(1, reposTotal + d); }
+function reposStop() { reposFin = 0; $("repos").classList.add("hidden"); }
+function tickRepos() {
+  if (!reposFin) return;
+  const r = (reposFin - Date.now()) / 1000;
+  if (r <= 0) { bip(); reposStop(); return; }
+  $("reposT").textContent = Math.floor(r/60) + ":" + String(Math.ceil(r%60) % 60).padStart(2, "0");
+  $("reposB").style.width = Math.min(100, 100*r/reposTotal) + "%";
+}
+function bip() {
+  try { navigator.vibrate && navigator.vibrate([200,100,200]);
+    const c = new (window.AudioContext || window.webkitAudioContext)(), o = c.createOscillator();
+    o.connect(c.destination); o.frequency.value = 880; o.start(); o.stop(c.currentTime + .35); } catch (e) {}
+}
+
+/* calculateur de disques */
+function calcDisques(xi) {
+  const e = DB.actif.exos[xi], kg = nb((e.sets.find(s => !s.ok) || e.sets[0] || {}).kg) || 60;
+  ouvrir(`<h3>🧮 Calculateur de disques</h3>
+    <div class="row"><div><div class="sub">Charge visée (kg)</div><input id="cdKg" inputmode="decimal" value="${kg}" oninput="majDisques()"></div>
+    <div><div class="sub">Poids de la barre (kg)</div><input id="cdBarre" inputmode="decimal" value="20" oninput="majDisques()"></div></div>
+    <div class="card gap" id="cdRes"></div><button class="btn sec full" onclick="fermer()">Fermer</button>`);
+  majDisques();
+}
+function majDisques() {
+  let reste = (nb($("cdKg").value) - nb($("cdBarre").value)) / 2;
+  if (reste < 0) { $("cdRes").innerHTML = "La charge est inférieure à la barre."; return; }
+  const sortie = [];
+  [25,20,15,10,5,2.5,1.25].forEach(d => { const n = Math.floor(reste / d + 1e-9); if (n) { sortie.push(`${n} × ${d} kg`); reste -= n*d; } });
+  $("cdRes").innerHTML = `<div class="titre">De chaque côté</div>${sortie.join("<br>") || "Barre seule"}` + (reste > .01 ? `<div class="sub gap">Reste ${reste.toFixed(2)} kg par côté non réalisable.</div>` : "");
+}
+
+/* choix d'exercices (séance ou routine) */
+let pickSel = [], pickFiltre = "", pickMuscle = "", pickCible = "";
+function choisirExos(cible = "seance") {
+  pickSel = []; pickFiltre = ""; pickMuscle = ""; pickCible = cible;
+  ouvrir(`<h3>Choisir des exercices</h3><input id="pkQ" placeholder="Rechercher…" oninput="pickFiltre=this.value;majPick()">
+    <div class="chips gap">${["", ...MUSCLES].map(m => `<button class="${m===''?'on':''}" onclick="pickMuscle='${m}';document.querySelectorAll('.chips button').forEach(b=>b.classList.toggle('on',b===this));majPick()">${m||'Tous'}</button>`).join("")}</div>
+    <div class="liste-exo" id="pkL"></div>
+    <div class="row"><button class="btn sec" onclick="nouvelExoPerso()">+ Créer</button><button class="btn" id="pkOk" onclick="validerPick()">Ajouter</button></div>`);
+  majPick();
+}
+function majPick() {
+  const q = pickFiltre.toLowerCase();
+  const l = exos().filter(e => (!pickMuscle || e.muscle === pickMuscle) && (!q || (e.nom + e.materiel).toLowerCase().includes(q)));
+  $("pkL").innerHTML = l.map(e => `<div class="${pickSel.includes(e.id)?'sel':''}" onclick="pickToggle('${e.id}')"><span>${esc(e.nom)}<br><span class="sub">${esc(e.muscle)} · ${esc(e.materiel)}</span></span>${pickSel.includes(e.id)?'✓':''}</div>`).join("") || '<div class="vide">Aucun résultat.</div>';
+  $("pkOk").textContent = pickSel.length ? `Ajouter (${pickSel.length})` : "Ajouter";
+}
+function pickToggle(id) { pickSel = pickSel.includes(id) ? pickSel.filter(x => x !== id) : [...pickSel, id]; majPick(); }
+function validerPick() {
+  if (pickCible === "seance") { DB.actif.exos.push(...pickSel.map(nouvelExo)); sauver(); fermer(); rendre(); }
+  else { brouillon.exos.push(...pickSel.filter(i => !brouillon.exos.includes(i))); formRoutine(); }
+}
+function nouvelExoPerso() {
+  ouvrir(`<h3>Nouvel exercice</h3><input id="neNom" placeholder="Nom"><div class="gap"><select id="neMus">${MUSCLES.map(m => `<option>${m}</option>`).join("")}</select></div>
+    <div class="gap"><input id="neMat" placeholder="Matériel (barre, machine…)"></div>
+    <label class="gap sub" style="display:block"><input type="checkbox" id="neT" style="width:auto"> Exercice chronométré (secondes)</label>
+    <div class="row gap"><button class="btn sec" onclick="choisirExos(pickCible)">Retour</button><button class="btn" onclick="sauverExoPerso()">Créer</button></div>`);
+}
+function sauverExoPerso() {
+  const nom = $("neNom").value.trim(); if (!nom) return;
+  const e = {id:"c-" + uid(), nom, muscle:$("neMus").value, materiel:$("neMat").value.trim() || "Perso", t:$("neT").checked};
+  DB.custom.push(e); sauver(); const c = pickCible; choisirExos(c); pickSel = [e.id]; majPick();
+}
+
+/* routines */
+let brouillon = null;
+function editerRoutine(id) {
+  const r = DB.routines.find(x => x.id === id);
+  brouillon = r ? {id:r.id, nom:r.nom, exos:[...r.exos]} : {id:null, nom:"", exos:[]};
+  formRoutine();
+}
+function formRoutine() {
+  ouvrir(`<h3>${brouillon.id ? "Modifier" : "Nouvelle"} routine</h3>
+    <input id="rtNom" placeholder="Nom de la routine" value="${esc(brouillon.nom)}" onchange="brouillon.nom=this.value">
+    <div class="liste-exo">${brouillon.exos.map((i, k) => `<div style="cursor:default"><span>${esc(exo(i).nom)}</span>
+      <span><button class="btn sec sm" onclick="rtMove(${k},-1)">↑</button> <button class="btn sec sm" onclick="rtMove(${k},1)">↓</button> <button class="btn danger sm" onclick="brouillon.exos.splice(${k},1);formRoutine()">✕</button></span></div>`).join("") || '<div class="vide" style="cursor:default">Aucun exercice.</div>'}</div>
+    <button class="btn sec full" onclick="choisirExos('routine')">+ Exercices</button>
+    <div class="row gap">${brouillon.id ? '<button class="btn danger" onclick="supprRoutine()">Supprimer</button>' : '<button class="btn sec" onclick="fermer()">Annuler</button>'}<button class="btn" onclick="sauverRoutine()">Enregistrer</button></div>`);
+}
+function rtMove(k, d) { const a = brouillon.exos, j = k + d; if (j < 0 || j >= a.length) return; [a[k], a[j]] = [a[j], a[k]]; formRoutine(); }
+function sauverRoutine() {
+  brouillon.nom = $("rtNom").value.trim() || "Routine";
+  if (brouillon.id) Object.assign(DB.routines.find(x => x.id === brouillon.id), brouillon);
+  else DB.routines.push({...brouillon, id:"r-" + uid()});
+  sauver(); fermer(); rendre();
+}
+function supprRoutine() { if (!confirm("Supprimer cette routine ?")) return; DB.routines = DB.routines.filter(x => x.id !== brouillon.id); sauver(); fermer(); rendre(); }
+
+/* ============ HISTORIQUE ============ */
+function vueHisto() {
+  const l = [...DB.hist].reverse();
+  const jours = Array.from({length:7}, (_, i) => { const d = new Date(Date.now() - (6-i)*864e5); return {l:d.toLocaleDateString("fr-FR",{weekday:"narrow"}), on:DB.hist.some(h => new Date(h.fin).toDateString() === d.toDateString())}; });
+  $("vue").innerHTML = `<div class="card"><div class="titre">7 derniers jours</div><div class="semaine">${jours.map(j => `<div>${j.l}<i class="${j.on?'on':''}"></i></div>`).join("")}</div></div>
+    <h2>Séances</h2>${l.map(h => `<div class="card" onclick="detailSeance('${h.id}')" style="cursor:pointer">
+      <div class="row" style="justify-content:space-between"><div class="titre" style="margin:0">${esc(h.nom)}</div><span class="sub" style="flex:none">${jourStr(h.fin)}</span></div>
+      <div class="sub gap">${fmtDuree((h.fin-h.debut)/1000)} · ${Math.round(volume(h.exos)).toLocaleString("fr-FR")} kg · ${h.exos.reduce((s,e)=>s+e.sets.length,0)} séries</div>
+      <div class="sub">${h.exos.map(e => esc(exo(e.id).nom)).join(", ")}</div></div>`).join("") || '<div class="vide">Aucune séance enregistrée.</div>'}`;
+}
+function detailSeance(id) {
+  const h = DB.hist.find(x => x.id === id);
+  ouvrir(`<h3>${esc(h.nom)} — ${jourStr(h.fin)}</h3>${h.exos.map(e => `<div class="card"><div class="exo-nom">${esc(exo(e.id).nom)}</div>
+    ${e.sets.map((s, i) => `<div class="ligne"><span>Série ${i+1}</span><b>${s.kg || 0} kg × ${s.reps || 0}${exo(e.id).t ? " s" : ""}</b></div>`).join("")}
+    ${e.notes ? `<div class="sub gap">📝 ${esc(e.notes)}</div>` : ""}</div>`).join("")}
+    <div class="row"><button class="btn danger" onclick="if(confirm('Supprimer cette séance ?')){DB.hist=DB.hist.filter(x=>x.id!=='${id}');sauver();fermer();rendre()}">Supprimer</button>
+    <button class="btn sec" onclick="fermer()">Fermer</button></div>`);
+}
+
+/* ============ PROGRÈS ============ */
+let progExo = "";
+function vueProgres() {
+  const faits = [...new Set(DB.hist.flatMap(h => h.exos.map(e => e.id)))];
+  if (!faits.length) { $("vue").innerHTML = '<div class="card vide">Termine une séance pour voir tes courbes de progression.</div>'; return; }
+  if (!faits.includes(progExo)) progExo = faits[0];
+  const pts = DB.hist.map(h => { const e = h.exos.find(x => x.id === progExo); return e && {t:h.fin, kg:Math.max(...e.sets.map(s => nb(s.kg))), rm:Math.max(...e.sets.map(s => e1rm(nb(s.kg), nb(s.reps)))), vol:volume([e])}; }).filter(Boolean);
+  const best = Math.max(...pts.map(p => p.kg)), bestRm = Math.max(...pts.map(p => p.rm));
+  $("vue").innerHTML = `<select onchange="progExo=this.value;vueProgres()">${faits.map(i => `<option value="${i}" ${i===progExo?'selected':''}>${esc(exo(i).nom)}</option>`).join("")}</select>
+    <div class="stats gap"><div class="stat"><b>${best}</b><span>record (kg)</span></div><div class="stat"><b>${Math.round(bestRm)}</b><span>1RM estimé</span></div><div class="stat"><b>${pts.length}</b><span>séances</span></div></div>
+    <div class="card"><div class="titre">Charge max (kg)</div><canvas id="g1"></canvas></div>
+    <div class="card"><div class="titre">1RM estimé (Epley)</div><canvas id="g2"></canvas></div>
+    <div class="card"><div class="titre">Volume par séance (kg)</div><canvas id="g3"></canvas></div>`;
+  courbe($("g1"), pts.map(p => [p.t, p.kg])); courbe($("g2"), pts.map(p => [p.t, Math.round(p.rm)])); courbe($("g3"), pts.map(p => [p.t, Math.round(p.vol)]));
+}
+function courbe(cv, pts, couleur = "#1a7f4e") {
+  const r = devicePixelRatio || 1, W = cv.clientWidth, H = cv.clientHeight; cv.width = W*r; cv.height = H*r;
+  const c = cv.getContext("2d"); c.scale(r, r); c.clearRect(0, 0, W, H);
+  if (!pts.length) { c.fillStyle = "#8a94a3"; c.fillText("Pas encore de données", 10, 20); return; }
+  const ys = pts.map(p => p[1]), mn = Math.min(...ys), mx = Math.max(...ys), pad = (mx - mn) * .15 || 1, lo = mn - pad, hi = mx + pad;
+  const t0 = pts[0][0], t1 = pts[pts.length-1][0], X = t => pts.length < 2 ? W/2 : 36 + (W-50) * (t - t0) / ((t1 - t0) || 1), Y = y => H - 22 - (H-36) * (y - lo) / (hi - lo);
+  c.strokeStyle = "#eef0f3"; c.fillStyle = "#8a94a3"; c.font = "10px sans-serif"; c.lineWidth = 1;
+  for (let i = 0; i <= 3; i++) { const y = lo + (hi-lo)*i/3; c.beginPath(); c.moveTo(34, Y(y)); c.lineTo(W-6, Y(y)); c.stroke(); c.fillText(Math.round(y), 2, Y(y)+3); }
+  c.strokeStyle = couleur; c.lineWidth = 2.5; c.beginPath(); pts.forEach((p, i) => i ? c.lineTo(X(p[0]), Y(p[1])) : c.moveTo(X(p[0]), Y(p[1]))); c.stroke();
+  c.fillStyle = couleur; pts.forEach(p => { c.beginPath(); c.arc(X(p[0]), Y(p[1]), 3.5, 0, 7); c.fill(); });
+  c.fillStyle = "#8a94a3"; [pts[0], pts[pts.length-1]].forEach((p, i) => { c.textAlign = i ? "right" : "left"; c.fillText(new Date(p[0]).toLocaleDateString("fr-FR", {day:"numeric", month:"short"}), i ? W-6 : 34, H-6); });
+}
+
+/* ============ CORPS : poids, mensurations, photos, vidéos ============ */
+let cmpA = "", cmpB = "";
+async function vueCorps() {
+  const l = [...DB.corps].sort((a, b) => a.t - b.t), der = l[l.length-1];
+  const medias = (await mediaAll()).filter(m => m.kind === "corps").sort((a, b) => b.date - a.date);
+  if (onglet !== "corps") return;
+  const urls = {}; medias.forEach(m => urls[m.id] = URL.createObjectURL(m.blob));
+  const photos = medias.filter(m => m.type === "photo");
+  $("vue").innerHTML = `<div class="card"><div class="titre">Poids &amp; mensurations</div>
+      <div class="row"><input id="cPoids" inputmode="decimal" placeholder="Poids (kg)"><input id="cTaille" inputmode="decimal" placeholder="Tour de taille (cm)"></div>
+      <div class="row gap"><input id="cBras" inputmode="decimal" placeholder="Bras (cm)"><input id="cPoit" inputmode="decimal" placeholder="Poitrine (cm)"></div>
+      <button class="btn full gap" onclick="ajoutCorps()">Enregistrer</button>
+      ${der ? `<div class="sub gap">Dernière mesure ${jourStr(der.t)} : ${[der.poids&&der.poids+" kg", der.taille&&"taille "+der.taille, der.bras&&"bras "+der.bras, der.poit&&"poitrine "+der.poit].filter(Boolean).join(" · ")}</div>` : ""}
+      <canvas id="gp" class="gap"></canvas></div>
+    <div class="card"><div class="titre">Photos &amp; vidéos de progression</div>
+      <div class="row gap"><label class="btn sec sm" style="text-align:center">📷 Photo<input type="file" accept="image/*" capture="environment" hidden onchange="ajouterMedia(this,'corps','')"></label>
+      <label class="btn sec sm" style="text-align:center">🖼 Galerie<input type="file" accept="image/*,video/*" multiple hidden onchange="ajouterMedia(this,'corps','')"></label>
+      <label class="btn sec sm" style="text-align:center">🎥 Vidéo<input type="file" accept="video/*" capture="environment" hidden onchange="ajouterMedia(this,'corps','')"></label></div>
+      <div class="galerie gap">${medias.map(m => `<div class="m" onclick="voirMedia('${m.id}')">${m.type === "photo" ? `<img src="${urls[m.id]}">` : `<video src="${urls[m.id]}#t=0.1" preload="metadata"></video>`}
+        <div class="d">${m.type==="video"?"🎥 ":""}${new Date(m.date).toLocaleDateString("fr-FR")}</div><button class="x" onclick="event.stopPropagation();supprMedia('${m.id}')">✕</button></div>`).join("")}</div>
+      ${!medias.length ? '<div class="vide">Aucun média pour l\'instant.</div>' : ""}</div>
+    ${photos.length > 1 ? `<div class="card"><div class="titre">Avant / après</div><div class="row">
+      <select id="cmpA" onchange="cmpA=this.value;comparer()">${photos.map(m => `<option value="${m.id}">${new Date(m.date).toLocaleDateString("fr-FR")}</option>`).join("")}</select>
+      <select id="cmpB" onchange="cmpB=this.value;comparer()">${photos.map(m => `<option value="${m.id}">${new Date(m.date).toLocaleDateString("fr-FR")}</option>`).join("")}</select></div>
+      <div class="compare" id="cmp"></div></div>` : ""}`;
+  window._urls = urls;
+  courbe($("gp"), l.filter(x => x.poids).map(x => [x.t, x.poids]));
+  if (photos.length > 1) { $("cmpA").value = cmpA = photos[photos.length-1].id; $("cmpB").value = cmpB = photos[0].id; comparer(); }
+}
+function comparer() {
+  const f = id => window._urls[id];
+  $("cmp").innerHTML = `<div><img src="${f(cmpA)}"><p>${$("cmpA").selectedOptions[0].text}</p></div><div><img src="${f(cmpB)}"><p>${$("cmpB").selectedOptions[0].text}</p></div>`;
+}
+function ajoutCorps() {
+  const e = {t:Date.now(), poids:nb($("cPoids").value), taille:nb($("cTaille").value), bras:nb($("cBras").value), poit:nb($("cPoit").value)};
+  if (!e.poids && !e.taille && !e.bras && !e.poit) return;
+  DB.corps.push(e); sauver(); rendre();
+}
+async function voirMedia(id) {
+  const m = (await mediaAll()).find(x => x.id === id), u = URL.createObjectURL(m.blob);
+  ouvrir(`<h3>${new Date(m.date).toLocaleDateString("fr-FR", {dateStyle:"long"})}</h3>${m.type === "photo" ? `<img class="plein" src="${u}" style="object-fit:contain">` : `<video class="plein" src="${u}" controls playsinline></video>`}
+    <button class="btn sec full gap" onclick="fermer()">Fermer</button>`);
+}
+async function supprMedia(id) { if (!confirm("Supprimer ce média ?")) return; await mediaDel(id); rendre(); }
+
+/* ============ EXERCICES : bibliothèque + démo vidéo ============ */
+let exoMuscle = "", exoQ = "";
+function vueExos() {
+  $("vue").innerHTML = `<input placeholder="Rechercher un exercice…" value="${esc(exoQ)}" oninput="exoQ=this.value;listeExos()">
+    <div class="chips gap">${["", ...MUSCLES].map(m => `<button class="${m===exoMuscle?'on':''}" onclick="exoMuscle='${m}';vueExos()">${m||'Tous'}</button>`).join("")}</div>
+    <div id="lex"></div><button class="btn sec full gap" onclick="choisirExos('routine');brouillon={id:null,nom:'',exos:[]};nouvelExoPerso()">+ Créer un exercice</button>`;
+  listeExos();
+}
+function listeExos() {
+  const q = exoQ.toLowerCase();
+  $("lex").innerHTML = exos().filter(e => (!exoMuscle || e.muscle === exoMuscle) && (!q || (e.nom + e.materiel).toLowerCase().includes(q)))
+    .map(e => `<div class="card" style="padding:12px 14px;cursor:pointer" onclick="ouvrirMedias('${e.id}')"><div class="exo-tete" style="margin:0"><div><div class="exo-nom">${esc(e.nom)}</div><span class="tag">${esc(e.muscle)}</span> <span class="tag or">${esc(e.materiel)}</span></div>
+      <div class="icones"><button title="Fiche de l'exercice">🎬</button></div></div></div>`).join("") || '<div class="vide">Aucun exercice.</div>';
+}
+async function ouvrirMedias(id) {
+  const x = exo(id), l = (await mediaAll()).filter(m => m.kind === "exo" && m.ref === id).sort((a, b) => b.date - a.date);
+  const q = encodeURIComponent(x.nom + " exécution technique");
+  const perfs = DB.hist.filter(h => h.exos.some(e => e.id === id)).slice(-3).reverse();
+  const tous = DB.hist.flatMap(h => h.exos.filter(e => e.id === id).flatMap(e => e.sets));
+  const rec = tous.length ? Math.max(...tous.map(t => nb(t.kg))) : 0;
+  const dansSeance = DB.actif && DB.actif.exos.some(e => e.id === id);
+  const action = dansSeance ? "" : `<button class="btn full gap" onclick="ajouterAuCarnet('${id}')">${DB.actif ? "+ Ajouter à la séance en cours" : "▶ Démarrer une séance avec cet exercice"}</button>`;
+  ouvrir(`<h3>🎬 ${esc(x.nom)}</h3>
+    <div><span class="tag">${esc(x.muscle)}</span> <span class="tag or">${esc(x.materiel)}</span>${rec ? ` <span class="tag">🏆 record ${rec} kg</span>` : ""}</div>
+    ${action}
+    ${perfs.length ? `<h2 style="margin-top:16px">Dernières séances</h2>${perfs.map(h => `<div class="ligne"><span>${jourStr(h.fin)}</span><b>${h.exos.find(e => e.id === id).sets.map(t => (t.kg || 0) + "×" + (t.reps || 0)).join(" · ")}</b></div>`).join("")}` : ""}
+    <a class="btn full gap" style="display:block;text-align:center;text-decoration:none" target="_blank" rel="noopener" href="https://www.youtube.com/results?search_query=${q}">▶ Voir une démo (YouTube)</a>
+    <h2 style="margin-top:16px">Mes vidéos et photos</h2>
+    <div class="row"><label class="btn sec sm" style="text-align:center">🎥 Filmer<input type="file" accept="video/*" capture="environment" hidden onchange="ajouterMedia(this,'exo','${id}')"></label>
+    <label class="btn sec sm" style="text-align:center">🖼 Importer<input type="file" accept="image/*,video/*" multiple hidden onchange="ajouterMedia(this,'exo','${id}')"></label></div>
+    <div class="galerie gap">${l.map(m => { const u = URL.createObjectURL(m.blob); return `<div class="m">${m.type === "photo" ? `<img src="${u}">` : `<video src="${u}" controls playsinline></video>`}
+      <div class="d">${new Date(m.date).toLocaleDateString("fr-FR")}</div><button class="x" onclick="mediaDel('${m.id}').then(()=>ouvrirMedias('${id}'))">✕</button></div>`; }).join("")}</div>
+    ${l.length ? "" : '<div class="vide">Filme ta technique pour la comparer plus tard.</div>'}
+    <button class="btn sec full gap" onclick="fermer()">Fermer</button>`);
+}
+
+function ajouterAuCarnet(id) {
+  if (!DB.actif) DB.actif = {debut:Date.now(), nom:"Séance libre", exos:[]};
+  DB.actif.exos.push(nouvelExo(id)); sauver(); fermer(); aller("seance");
+}
+
+/* ============ DONNÉES : réglages, export / import ============ */
+function menuDonnees() {
+  ouvrir(`<h3>Réglages &amp; données</h3>
+    <div class="sub">Temps de repos automatique après chaque série</div>
+    <select onchange="DB.prefs.repos=+this.value;sauver()">${[[0,"Désactivé"],[45,"45 s"],[60,"1 min"],[90,"1 min 30"],[120,"2 min"],[180,"3 min"]].map(([v,l]) => `<option value="${v}" ${DB.prefs.repos===v?'selected':''}>${l}</option>`).join("")}</select>
+    <div class="card gap"><div class="sub">Les séances et mesures restent sur cet appareil. Exporte une sauvegarde de temps en temps (photos et vidéos non incluses).</div>
+    <div class="row gap"><button class="btn sec" onclick="exporter()">⬇ Exporter</button>
+    <label class="btn sec" style="text-align:center">⬆ Importer<input type="file" accept=".json" hidden onchange="importer(this)"></label></div></div>
+    <button class="btn sec full" onclick="fermer()">Fermer</button>`);
+}
+function exporter() {
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(new Blob([JSON.stringify(DB, null, 1)], {type:"application/json"}));
+  a.download = "carnet-" + new Date().toISOString().slice(0, 10) + ".json"; a.click();
+}
+function importer(inp) {
+  const f = inp.files[0]; if (!f) return;
+  f.text().then(t => { const d = JSON.parse(t); if (!d.hist || !d.routines) throw 0; if (!confirm("Remplacer toutes les données actuelles ?")) return; DB = d; sauver(); fermer(); rendre(); })
+    .catch(() => alert("Fichier invalide."));
+}
+
+rendre();
+</script>
+</body>
+</html>
