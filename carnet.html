@@ -526,14 +526,22 @@ function vueExos() {
 function listeExos() {
   const q = exoQ.toLowerCase();
   $("lex").innerHTML = exos().filter(e => (!exoMuscle || e.muscle === exoMuscle) && (!q || (e.nom + e.materiel).toLowerCase().includes(q)))
-    .map(e => `<div class="card" style="padding:12px 14px"><div class="exo-tete" style="margin:0"><div><div class="exo-nom">${esc(e.nom)}</div><span class="tag">${esc(e.muscle)}</span> <span class="tag or">${esc(e.materiel)}</span></div>
-      <div class="icones"><button title="Démo vidéo et mes vidéos" onclick="ouvrirMedias('${e.id}')">🎬</button></div></div></div>`).join("") || '<div class="vide">Aucun exercice.</div>';
+    .map(e => `<div class="card" style="padding:12px 14px;cursor:pointer" onclick="ouvrirMedias('${e.id}')"><div class="exo-tete" style="margin:0"><div><div class="exo-nom">${esc(e.nom)}</div><span class="tag">${esc(e.muscle)}</span> <span class="tag or">${esc(e.materiel)}</span></div>
+      <div class="icones"><button title="Fiche de l'exercice">🎬</button></div></div></div>`).join("") || '<div class="vide">Aucun exercice.</div>';
 }
 async function ouvrirMedias(id) {
   const x = exo(id), l = (await mediaAll()).filter(m => m.kind === "exo" && m.ref === id).sort((a, b) => b.date - a.date);
   const q = encodeURIComponent(x.nom + " exécution technique");
+  const perfs = DB.hist.filter(h => h.exos.some(e => e.id === id)).slice(-3).reverse();
+  const tous = DB.hist.flatMap(h => h.exos.filter(e => e.id === id).flatMap(e => e.sets));
+  const rec = tous.length ? Math.max(...tous.map(t => nb(t.kg))) : 0;
+  const dansSeance = DB.actif && DB.actif.exos.some(e => e.id === id);
+  const action = dansSeance ? "" : `<button class="btn full gap" onclick="ajouterAuCarnet('${id}')">${DB.actif ? "+ Ajouter à la séance en cours" : "▶ Démarrer une séance avec cet exercice"}</button>`;
   ouvrir(`<h3>🎬 ${esc(x.nom)}</h3>
-    <a class="btn full" style="display:block;text-align:center;text-decoration:none" target="_blank" rel="noopener" href="https://www.youtube.com/results?search_query=${q}">▶ Voir une démo (YouTube)</a>
+    <div><span class="tag">${esc(x.muscle)}</span> <span class="tag or">${esc(x.materiel)}</span>${rec ? ` <span class="tag">🏆 record ${rec} kg</span>` : ""}</div>
+    ${action}
+    ${perfs.length ? `<h2 style="margin-top:16px">Dernières séances</h2>${perfs.map(h => `<div class="ligne"><span>${jourStr(h.fin)}</span><b>${h.exos.find(e => e.id === id).sets.map(t => (t.kg || 0) + "×" + (t.reps || 0)).join(" · ")}</b></div>`).join("")}` : ""}
+    <a class="btn full gap" style="display:block;text-align:center;text-decoration:none" target="_blank" rel="noopener" href="https://www.youtube.com/results?search_query=${q}">▶ Voir une démo (YouTube)</a>
     <h2 style="margin-top:16px">Mes vidéos et photos</h2>
     <div class="row"><label class="btn sec sm" style="text-align:center">🎥 Filmer<input type="file" accept="video/*" capture="environment" hidden onchange="ajouterMedia(this,'exo','${id}')"></label>
     <label class="btn sec sm" style="text-align:center">🖼 Importer<input type="file" accept="image/*,video/*" multiple hidden onchange="ajouterMedia(this,'exo','${id}')"></label></div>
@@ -541,6 +549,11 @@ async function ouvrirMedias(id) {
       <div class="d">${new Date(m.date).toLocaleDateString("fr-FR")}</div><button class="x" onclick="mediaDel('${m.id}').then(()=>ouvrirMedias('${id}'))">✕</button></div>`; }).join("")}</div>
     ${l.length ? "" : '<div class="vide">Filme ta technique pour la comparer plus tard.</div>'}
     <button class="btn sec full gap" onclick="fermer()">Fermer</button>`);
+}
+
+function ajouterAuCarnet(id) {
+  if (!DB.actif) DB.actif = {debut:Date.now(), nom:"Séance libre", exos:[]};
+  DB.actif.exos.push(nouvelExo(id)); sauver(); fermer(); aller("seance");
 }
 
 /* ============ DONNÉES : réglages, export / import ============ */
